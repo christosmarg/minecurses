@@ -22,16 +22,13 @@ A simplistic minesweeper game written with the `ncurses` library. The game was o
 
 ## Execution
 
-* `program_name` = program's name
-* `full_path/` = full path
-
 ### Linux
 
 **Dependencies**
 * `ncurses`
 
 ```shell
-$ cd full_path/assignment-1.5-arrays-pointers-files/program_name
+$ cd full_path_to/minesweeper
 $ make
 $ make run
 $ make clean # optional
@@ -47,7 +44,7 @@ $ make clean # optional
 In CMD, do the following:
 
 ```bat
-cd full_path/assignment-1.5-arrays-pointers-files/program_name
+cd full_path_to/minesweeper
 make
 make run
 make clean
