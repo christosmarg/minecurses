@@ -49,8 +49,6 @@ char **init_mineboard(WINDOW *gameWin, int COLS, int ROWS, int NMINES)
         place_mines(mineboard, COLS, ROWS, NMINES);
         add_adj(mineboard, COLS, ROWS);
         fill_spaces(mineboard, COLS, ROWS, NMINES);
-        //print_board(gameWin, mineboard, COLS, ROWS);
-        //filewrite(mineboard, COLS, ROWS, 1, 2);
     }
     
     return mineboard;

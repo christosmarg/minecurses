@@ -20,7 +20,18 @@
 
 #define BLANK ' '
 #define MINE '*'
-#define CLEAR "                                                                  "
+#define CLEAR "                               "
+#define SPACE ' '
+#define ENTER '\n'
+#define OPEN_LOWER 'o'
+#define OPEN_UPPER 'O'
+#define FLAG 'F'
+#define FLAG_LOWER 'f'
+#define FLAG_UPPER 'F'
+#define DEFUSE_LOWER 'g'
+#define DEFUSE_UPPER 'G'
+#define DEFUSED 'D'
+#define QUIT 'q'
 
 char **init_dispboard(struct _win_st*, int, int);
 void fill_dispboard(char **, int, int);

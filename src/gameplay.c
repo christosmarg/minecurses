@@ -15,36 +15,36 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
     {
         navigate(gameWin, dispboard, &move, &mboardXLoc, &mboardYLoc);
         
-        if (move == '\n' || move == 'o' || move == 'O') // handle cell opening
+        if (move == ENTER || move == SPACE || move == OPEN_LOWER || move == OPEN_UPPER) // handle cell opening
         {
             transfer(dispboard, mineboard, mboardYLoc, mboardXLoc);
             reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
             cantFlag = true;
             if (dispboard[mboardYLoc][mboardXLoc] == MINE) gameOver = true;
         }
-        else if (move == 'f' || move == 'F') // handle falgs
+        else if (move == FLAG_LOWER || move == FLAG_UPPER) // handle falgs
         {
-            if (dispboard[mboardYLoc][mboardXLoc] == 'F') dispboard[mboardYLoc][mboardXLoc] = ' '; // undo flag 
-            else if (dispboard[mboardYLoc][mboardXLoc] != 'F' && dispboard[mboardYLoc][mboardXLoc] != ' ') continue; // dont flag an already opened mine
-            else dispboard[mboardYLoc][mboardXLoc] = 'F'; // flag if not flagged already
+            if (dispboard[mboardYLoc][mboardXLoc] == FLAG) dispboard[mboardYLoc][mboardXLoc] = BLANK; // undo flag 
+            else if (dispboard[mboardYLoc][mboardXLoc] != FLAG && dispboard[mboardYLoc][mboardXLoc] != BLANK) continue; // dont flag an already opened mine
+            else dispboard[mboardYLoc][mboardXLoc] = FLAG; // flag if not flagged already
             reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
         }
-        else if (move == 'g' || move == 'G') // check for defuse
+        else if (move == DEFUSE_LOWER || move == DEFUSE_UPPER) // check for defuse
         {
-            if (dispboard[mboardYLoc][mboardXLoc] == 'F' && mineboard[mboardYLoc][mboardXLoc] == MINE) // is_mine replace
+            if (dispboard[mboardYLoc][mboardXLoc] == FLAG && mineboard[mboardYLoc][mboardXLoc] == MINE) // is_mine replace
             {
                 numDefused++;
                 refresh();
-                dispboard[mboardYLoc][mboardXLoc] = mineboard[mboardYLoc][mboardXLoc] = 'D';
+                dispboard[mboardYLoc][mboardXLoc] = mineboard[mboardYLoc][mboardXLoc] = DEFUSED;
                 reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
             }
-            else if (dispboard[mboardYLoc][mboardXLoc] == 'F' && mineboard[mboardYLoc][mboardXLoc] != MINE) gameOver = true; // handle false defusal               
+            else if (dispboard[mboardYLoc][mboardXLoc] == FLAG && mineboard[mboardYLoc][mboardXLoc] != MINE) gameOver = true; // handle false defusal               
         }
 
         mvprintw(1, xMiddle-8, "Defused mines: %d/%d", numDefused, NMINES);
         
     } while (((mboardYLoc >= 0 && mboardYLoc < COLS) && (mboardXLoc >= 0 && mboardXLoc < ROWS)) &&
-             numDefused < NMINES && !gameOver && move != 'q');
+             numDefused < NMINES && !gameOver && move != QUIT);
     
     if (gameOver == true)
     {
@@ -90,5 +90,5 @@ bool is_flagged()
 
 bool is_defused(char **dispboard, char **mineboard, int mboardYLoc, int mboardXLoc)
 {
-    return ((dispboard[mboardYLoc][mboardXLoc] == 'D')) ? true : false;
+    return ((dispboard[mboardYLoc][mboardXLoc] == DEFUSED)) ? true : false;
 }

@@ -1,6 +1,6 @@
 # Minesweeper
 
-A simplistic minesweeper game written with the `ncurses` library. The game was originally made as a university assignment of mine, but I decided to take it a bit further afterwards.
+A simplistic minesweeper game using the `ncurses` library. The game was originally made as a university assignment of mine, but I decided to take it a bit further afterwards.
 
 ## How to play
 
@@ -8,7 +8,7 @@ A simplistic minesweeper game written with the `ncurses` library. The game was o
 * Enter number of rows
 * Enter number of mines
 * Move with `w`/`s`/`a`/`d` or Vim keys (`k`/`j`/`h`/`l`)
-* Open cell with `[ENTER]` or `o`
+* Open cell with `[ENTER]`, `[SPACE]`, or `o`
 * Flag cell with `f`
 * Defuse mine (only if flagged) with `g`
 * You win if you defuse all the mines
