@@ -12,11 +12,7 @@ char **init_dispboard(WINDOW *gameWin, int COLS, int ROWS)
         mvprintw(1, 1, "Error, not enough memory, exiting...");
         exit(EXIT_FAILURE);
     }
-    else
-    {
-        fill_dispboard(dispboard, COLS, ROWS);
-        print_board(gameWin, dispboard, COLS, ROWS);
-    }
+    else fill_dispboard(dispboard, COLS, ROWS);
     
     return dispboard;
 }

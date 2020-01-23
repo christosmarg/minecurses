@@ -11,6 +11,8 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
     yMiddle = yMax / 2;
     xMiddle = xMax / 2;
 
+    print_board(gameWin, dispboard, COLS, ROWS);
+    
     do
     {
         navigate(gameWin, dispboard, &move, &mboardXLoc, &mboardYLoc);

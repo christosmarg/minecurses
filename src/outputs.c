@@ -62,7 +62,7 @@ void filewrite(char **mineboard, int COLS, int ROWS, int hitRow, int hitCol, con
             fprintf(mnsOut, "\n");
         }           
 
-        mvprintw(1, 1, "Session written to file  ");
+        mvprintw(1, 1, "Session written to file       ");
         refresh();
         getchar();
     }
