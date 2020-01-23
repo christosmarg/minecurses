@@ -42,6 +42,8 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
             }
             else if (dispboard[mboardYLoc][mboardXLoc] == FLAG && mineboard[mboardYLoc][mboardXLoc] != MINE) gameOver = true; // handle false defusal               
         }
+        else if (move == 'p') pause_audio(); // handle audio
+        else if (move == '+' || move == '-') volume(move);
 
         mvprintw(1, xMiddle-8, "Defused mines: %d/%d", numDefused, NMINES);
         

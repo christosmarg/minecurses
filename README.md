@@ -13,11 +13,18 @@ A simplistic minesweeper game using the `ncurses` library. The game was original
 * Defuse mine (only if flagged) with `g`
 * You win if you defuse all the mines
 * You lose in case you open a mine or you try to defuse a flagged cell not containing a mine
-* Quit with `q`
+
+Additional controls
+
+* `p`: Pause audio
+* `+`: Volume up
+* `-`: Volume down
+* `q`: Quit
 
 ## To Do
 
 * Fix screen bug with big dimensions
+* Handle resizing
 * Add colors
 
 ## Execution
@@ -26,6 +33,8 @@ A simplistic minesweeper game using the `ncurses` library. The game was original
 
 **Dependencies**
 * `ncurses`
+* `SDL2`
+* `SDL2_mixer`
 
 ```shell
 $ cd full_path_to/minesweeper
@@ -39,7 +48,9 @@ $ make clean # optional
 **Dependencies:**   
 * MinGW gcc compiler
 * `make`
-* `PDCurses` library (for minesweeper)
+* `PDCurses`
+* `SDL2`
+* `SDL2_mixer`
 
 In CMD, do the following:
 

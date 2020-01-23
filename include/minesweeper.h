@@ -17,6 +17,7 @@
 #include "navigation.h"
 #include "outputs.h"
 #include "wins.h"
+#include "audio.h"
 
 #define BLANK ' '
 #define MINE '*'

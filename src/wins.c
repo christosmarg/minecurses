@@ -44,7 +44,7 @@ WINDOW *game_win(int COLS, int ROWS, int NMINES)
 void options_menu()
 {
     int yMax = getmaxy(stdscr);
-    mvprintw(yMax-3, 5, "q Quit     w/k Move up     s/j Move down       a/h Move Left       d/l Move Right      [ENTER]/o Open cell");
-    mvprintw(yMax-2, 5, "f Flag cell     g Defuse (if flagged only)");
+    mvprintw(yMax-3, 5, "q Quit          w/k Move up     s/j Move down       a/h Move Left       d/l Move Right      [ENTER]/o Open cell");
+    mvprintw(yMax-2, 5, "f Flag cell     g Defuse (if flagged only)          p Pause music       + Volume up         - Volume down");
     refresh();
 }

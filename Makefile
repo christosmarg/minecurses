@@ -24,12 +24,12 @@ else
 endif
 
 ifeq ($(detected_OS),Linux)
-	LDLIBS += -lm -lncurses 
+	LDLIBS += -lm -lncurses -lSDL2 -lSDL2_mixer -pthread
 	MOVE = mv
 	MKDIR_P = mkdir -p
 endif
 ifeq ($(detected_OS),Windows)
-	LDLIBS += -lm -LC:\PDCurses\wincon -lpdcurses
+	LDLIBS += -lm -LC:\PDCurses\wincon -lpdcurses -lSDL2 -lSDL2_mixer -pthread
 	MOVE = move
 	MKDIR_P = md
 endif
