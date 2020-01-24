@@ -12,8 +12,8 @@ int main(int argc, char **argv)
 	int yMax, xMax;
 	WINDOW *menuWin = menu_win(&yMax, &xMax);
 
-	int COLS = set_cols(menuWin, xMax);
-    int ROWS = set_rows(menuWin, yMax);
+    int COLS = set_cols(menuWin, xMax);
+	int ROWS = set_rows(menuWin, yMax);
     int NMINES = set_nmines(menuWin, COLS*ROWS);
 
 	WINDOW *gameWin = game_win(COLS, ROWS, NMINES);

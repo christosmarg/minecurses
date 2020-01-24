@@ -32,6 +32,9 @@
 #define DEFUSE_LOWER 'g'
 #define DEFUSE_UPPER 'G'
 #define DEFUSED 'D'
+#define PAUSE_AUDIO 'p'
+#define VOLUME_UP '+'
+#define VOLUME_DOWN '-'
 #define QUIT 'q'
 
 char **init_dispboard(struct _win_st*, int, int);

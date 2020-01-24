@@ -3,9 +3,9 @@
 char **init_dispboard(WINDOW *gameWin, int COLS, int ROWS)
 {
     int i;
-    char **dispboard = (char **)malloc(COLS * sizeof(char *));
-    for (i = 0; i < COLS; i++)
-        dispboard[i] = (char *)malloc(ROWS);
+    char **dispboard = (char **)malloc(ROWS * sizeof(char *));
+    for (i = 0; i < ROWS; i++)
+        dispboard[i] = (char *)malloc(COLS);
 
     if (dispboard == NULL)
     {
@@ -22,8 +22,8 @@ void fill_dispboard(char **dispboard, int COLS, int ROWS)
 {
     int i, j;
 
-    for (i = 0; i < COLS; i++)
-        for (j = 0; j < ROWS; j++)
+    for (i = 0; i < ROWS; i++)
+        for (j = 0; j < COLS; j++)
             dispboard[i][j] = BLANK;
 }
 
@@ -31,9 +31,9 @@ void fill_dispboard(char **dispboard, int COLS, int ROWS)
 char **init_mineboard(WINDOW *gameWin, int COLS, int ROWS, int NMINES)
 {
     int i;
-    char **mineboard = (char **)malloc(COLS * sizeof(char *));
-    for (i = 0; i < COLS; i++)
-        mineboard[i] = (char *)malloc(ROWS);
+    char **mineboard = (char **)malloc(ROWS * sizeof(char *));
+    for (i = 0; i < ROWS; i++)
+        mineboard[i] = (char *)malloc(COLS);
 
     if (mineboard == NULL)
     {
@@ -70,8 +70,8 @@ void add_adj(char **mineboard, int COLS, int ROWS)
 {
     int i, j;
 
-    for (i = 0; i < COLS; i++)
-        for (j = 0; j < ROWS; j++)
+    for (i = 0; i < ROWS; i++)
+        for (j = 0; j < COLS; j++)
             if (!is_mine(mineboard, i, j))
                 mineboard[i][j] = adj_mines(mineboard, i, j, COLS, ROWS) + '0';                
 }
@@ -84,7 +84,7 @@ bool is_mine(char **mineboard, int row, int col)
 
 bool outof_bounds(int row, int col, int COLS, int ROWS)
 {
-    return (row < 0 || row > COLS-1 || col < 0 || col > ROWS-1) ? true : false;
+    return (row < 0 || row > ROWS-1 || col < 0 || col > COLS-1) ? true : false;
 }
 
 
@@ -110,8 +110,8 @@ void fill_spaces(char **mineboard, int COLS, int ROWS, int NMINES)
 {
     int i, j;
 
-    for (i = 0; i < COLS; i++)
-        for (j = 0; j < ROWS; j++)
+    for (i = 0; i < ROWS; i++)
+        for (j = 0; j < COLS; j++)
             if (mineboard[i][j] != MINE && mineboard[i][j] == '0')
                 mineboard[i][j] = '-';
 }

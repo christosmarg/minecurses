@@ -40,7 +40,7 @@ int set_nmines(WINDOW *menuWin, int DIMENSIONS)
 
     do
     {
-        mvwprintw(menuWin, 3, 1, "Mines (Max = %d): ", DIMENSIONS-10); // -10 so the player has a chance to win
+        mvwprintw(menuWin, 3, 1, "Mines (Max = %d): ", DIMENSIONS-15); // -10 so the player has a chance to win
         wrefresh(menuWin);
         scanw("%d", &NMINES);
         mvwprintw(menuWin, 3, NMINES_CHAR_LENGTH, "%d", NMINES);
