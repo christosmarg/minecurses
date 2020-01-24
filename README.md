@@ -23,7 +23,6 @@ Additional controls
 
 ## To Do
 
-* Fix screen bug with big dimensions
 * Handle resizing
 * Add colors
 
@@ -62,4 +61,4 @@ make clean
 ```
 ## Preview
 
-![MinesweeperScr](https://user-images.githubusercontent.com/54286563/72887644-cad7c500-3d14-11ea-8b8b-7e91df4806ab.png)
+![MinesweeperScr](https://user-images.githubusercontent.com/54286563/73043435-bf4be180-3e6d-11ea-9a72-9a6250ab1f64.png)
