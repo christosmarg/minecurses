@@ -17,7 +17,7 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
     {
         navigate(gameWin, dispboard, &move, &mboardXLoc, &mboardYLoc);
         
-        if (move == ENTER || move == SPACE || move == OPEN_LOWER || move == OPEN_UPPER) // handle cell opening
+        if (move == ENTER || move == OPEN_LOWER || move == OPEN_UPPER) // handle cell opening
         {
             transfer(dispboard, mineboard, mboardYLoc, mboardXLoc);
             reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);

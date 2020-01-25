@@ -8,7 +8,7 @@ A simplistic minesweeper game using the `ncurses` library. The game was original
 * Enter number of rows
 * Enter number of mines
 * Move with `w`/`s`/`a`/`d` or Vim keys (`k`/`j`/`h`/`l`)
-* Open cell with `[ENTER]`, `[SPACE]`, or `o`
+* Open cell with `[ENTER]`, or `o`
 * Flag cell with `f`
 * Defuse mine (only if flagged) with `g`
 * You win if you defuse all the mines

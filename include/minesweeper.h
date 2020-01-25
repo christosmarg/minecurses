@@ -3,9 +3,6 @@
 
 #if defined linux || defined __unix__
 #include <ncurses.h>
-#elif defined _WIN32 || defined _WIN64
-#include <pdcurses.h>
-#include <stdint.h>
 #endif
 
 #include <stdlib.h>
@@ -22,7 +19,6 @@
 #define BLANK ' '
 #define MINE '*'
 #define CLEAR "                               "
-#define SPACE ' '
 #define ENTER '\n'
 #define OPEN_LOWER 'o'
 #define OPEN_UPPER 'O'

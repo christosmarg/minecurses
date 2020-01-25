@@ -11,28 +11,10 @@ CC = gcc
 CPPFLAGS += -Iinclude
 CFLAGS += -Wall 
 LDFLAGS += -Llib
+LDLIBS += -lm -lncurses -lSDL2 -lSDL2_mixer -pthread
 
-ifeq ($(OS),Windows_NT)
-    detected_OS := Windows
-else
-    detected_OS := $(shell uname)
-endif
-ifeq ($(OS),Linux)
-    detected_OS := Linux
-else
-    detected_OS := $(shell uname)
-endif
-
-ifeq ($(detected_OS),Linux)
-	LDLIBS += -lm -lncurses -lSDL2 -lSDL2_mixer -pthread
-	MOVE = mv
-	MKDIR_P = mkdir -p
-endif
-ifeq ($(detected_OS),Windows)
-	LDLIBS += -lm -LC:\PDCurses\wincon -lpdcurses -lSDL2 -lSDL2_mixer -pthread
-	MOVE = move
-	MKDIR_P = md
-endif
+MOVE = mv
+MKDIR_P = mkdir -p
 
 .PHONY: all clean
 
