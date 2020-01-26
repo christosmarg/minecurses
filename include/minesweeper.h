@@ -1,7 +1,7 @@
 #ifndef MINESWEEPER_H
 #define MINESWEEPER_H
 
-#if defined linux || defined __unix__
+#if defined linux || defined __unix__ || defined __APPLE__
 #include <ncurses.h>
 #endif
 

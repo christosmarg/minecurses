@@ -80,18 +80,6 @@ void reveal(WINDOW *gameWin, char **dispboard, int mboardYLoc, int mboardXLoc, i
 }
 
 
-void flag_handler()
-{
-
-}
-
-
-bool is_flagged()
-{
-
-}
-
-
 bool is_defused(char **dispboard, char **mineboard, int mboardYLoc, int mboardXLoc)
 {
     return ((dispboard[mboardYLoc][mboardXLoc] == DEFUSED)) ? true : false;
