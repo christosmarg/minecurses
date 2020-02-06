@@ -24,41 +24,26 @@ Additional controls
 ## To Do
 
 * Handle resizing
+* Add restart option
 * Add colors
 
 ## Execution
 
-### Linux
+### Linux / Unix / macOS
 
 **Dependencies**
+* `make`
 * `ncurses`
 * `SDL2`
 * `SDL2_mixer`
 
 ```shell
-$ cd full_path_to/minesweeper
+$ cd path_to/minesweeper
 $ make
 $ make run
 $ make clean # optional
 ```
 
-### Windows (not tested)
-
-**Dependencies:**   
-* MinGW gcc compiler
-* `make`
-* `PDCurses`
-* `SDL2`
-* `SDL2_mixer`
-
-In CMD, do the following:
-
-```bat
-cd full_path_to/minesweeper
-make
-make run
-make clean
-```
 ## Preview
 
-![MinesweeperScr](https://user-images.githubusercontent.com/54286563/73043435-bf4be180-3e6d-11ea-9a72-9a6250ab1f64.png)
+![MinesweeperScr](https://user-images.githubusercontent.com/54286563/73931645-4d4db080-48e1-11ea-981b-e9b028d34c41.png)
