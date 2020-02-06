@@ -10,6 +10,7 @@ char **init_dispboard(WINDOW *gameWin, int COLS, int ROWS)
     if (dispboard == NULL)
     {
         mvprintw(1, 1, "Error, not enough memory, exiting...");
+        refresh();
         exit(EXIT_FAILURE);
     }
     else fill_dispboard(dispboard, COLS, ROWS);
@@ -38,6 +39,7 @@ char **init_mineboard(WINDOW *gameWin, int COLS, int ROWS, int NMINES)
     if (mineboard == NULL)
     {
         mvprintw(1, 1, "Error, not enough memory, exiting...");
+        refresh();
         exit(EXIT_FAILURE);
     }
     else

@@ -38,14 +38,15 @@ void print_grid(WINDOW *gameWin, int ROWS, int COLS)
 }
 
 
-void filewrite(char **mineboard, int COLS, int ROWS, int hitRow, int hitCol, const char *status)
+void session_write(char **mineboard, int COLS, int ROWS, int hitRow, int hitCol, const char *status)
 {
     int i, j;
-    FILE *mnsOut = fopen("txt/mnsout.txt", "w");
+    FILE *mnsOut = fopen(SESSION_PATH, "w");
 
     if (mnsOut == NULL)
     {
         mvprintw(1, 1, "Error opening file, exiting...");
+        refresh();
         exit(EXIT_FAILURE);
     }
     else
@@ -68,6 +69,55 @@ void filewrite(char **mineboard, int COLS, int ROWS, int hitRow, int hitCol, con
     }
 
     fclose(mnsOut);
+}
+
+void score_write(int numDefused, int COLS, int ROWS)
+{
+    FILE *scoreLog = fopen(SCORE_LOG_PATH, "a");
+    char *playerName = get_pname();
+
+    // add titles etc
+
+    if (scoreLog == NULL)
+    {
+        mvprintw(1, 1, "Error opening file, exiting...");
+        refresh();
+        exit(EXIT_FAILURE);
+    }
+    else
+    {
+        fprintf(scoreLog, "\n%s\t\t\t\t%d\t\t\t\t\t%dx%d", playerName, numDefused, COLS, ROWS);
+        sort_scorelog(scoreLog); // pending
+        mvprintw(1, 1, "New score written to score log");
+        refresh();
+        getchar();
+    }
+    
+    fclose(scoreLog);
+    free(playerName);
+}
+
+char *get_pname()
+{   
+    char buffer[20];
+    char *playerName;
+
+    move(1, 1);
+    echo();
+    clrtoeol();
+    printw("Your name: ");
+    refresh();
+    scanw("%s", buffer);
+    noecho();
+    refresh();
+
+    playerName = (char *)malloc(strlen(buffer) + 1);
+    return (strcpy(playerName, buffer));
+}
+
+void sort_scorelog(FILE *scoreLog)
+{
+
 }
 
 

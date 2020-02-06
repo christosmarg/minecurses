@@ -55,14 +55,15 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
         game_over(gameWin, mineboard, yMiddle, xMiddle);
         getchar();
         print_board(gameWin, mineboard, COLS, ROWS);
-        filewrite(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "lost");
+        session_write(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "lost");
     }
 
     if (numDefused == NMINES)
     {
         game_won(gameWin, yMiddle, xMiddle);
         getchar();
-        filewrite(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "won");
+        session_write(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "won");
+        score_write(numDefused, COLS, ROWS);
     }
 }
 
