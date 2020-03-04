@@ -25,8 +25,14 @@ Additional controls
 
 * Handle resizing
 * Add restart option
+* Add quit option right when game opens
 * Load score log to ui
+* Improve score log
+* Add macros for the scaled board dimensions
 * Add colors
+* Fix curs_set
+* Add echo during setup
+* Add unicode support
 
 ## Execution
 
