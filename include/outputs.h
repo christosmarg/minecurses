@@ -15,6 +15,4 @@ void score_write(int, int, int);
 char *get_pname();
 void sort_scorelog(FILE *);
 
-
-
 #endif

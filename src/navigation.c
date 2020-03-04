@@ -14,7 +14,6 @@ void navigate(WINDOW *gameWin, char **mineboard, char *move, int *mboardXLoc, in
     getmv(gameWin, move, &yLoc, &xLoc, yMax, xMax);
 }
 
-
 void getmv(WINDOW *gameWin, char *move, int *yLoc, int *xLoc, int yMax, int xMax)
 {
     *move = wgetch(gameWin);
@@ -39,13 +38,11 @@ void getmv(WINDOW *gameWin, char *move, int *yLoc, int *xLoc, int yMax, int xMax
     }
 }
 
-
 void mvup(int *yLoc)
 {
     (*yLoc)--;
     if (*yLoc < 1) *yLoc = 1;
 }
-
 
 void mvdown(int *yLoc, int yMax)
 {
@@ -53,20 +50,17 @@ void mvdown(int *yLoc, int yMax)
     if (*yLoc > yMax-2) *yLoc = yMax-2;
 }
 
-
 void mvleft(int *xLoc)
 {
     *xLoc -= 3;
     if (*xLoc < 2) *xLoc = 2;
 }
 
-
 void mvright(int *xLoc, int xMax)
 {
     *xLoc += 3;
     if (*xLoc > xMax-3) *xLoc = xMax-3;
 }
-
 
 void update_curs(WINDOW *gameWin, int yLoc, int xLoc)
 {

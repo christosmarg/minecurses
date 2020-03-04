@@ -6,16 +6,15 @@ int set_cols(WINDOW *menuWin, int xMax)
 
     do
     {
-        mvwprintw(menuWin, 1, 1, "Columns (Min = 5, Max = %d): ", (xMax-2)/3 - 2);
+        mvwprintw(menuWin, 1, 1, "Columns (Min = 5, Max = %d): ", (xMax-2)/3-2);
         wrefresh(menuWin);
         scanw("%d", &COLS);
         mvwprintw(menuWin, 1, COLS_CHAR_LENGTH, "%d", COLS);
         wrefresh(menuWin);
-    } while (COLS < 5 || COLS > (xMax-2)/3 - 2);
+    } while (COLS < 5 || COLS > (xMax-2)/3-2);
 
     return COLS;    
 }
-
 
 int set_rows(WINDOW *menuWin, int yMax)
 {
@@ -32,7 +31,6 @@ int set_rows(WINDOW *menuWin, int yMax)
     
     return ROWS;
 }
-
 
 int set_nmines(WINDOW *menuWin, int DIMENSIONS)
 {

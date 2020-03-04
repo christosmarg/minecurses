@@ -22,7 +22,6 @@ void print_board(WINDOW *gameWin, char **board, int COLS, int ROWS)
     wattron(gameWin, A_BOLD);
 }
 
-
 void print_grid(WINDOW *gameWin, int ROWS, int COLS)
 {
     int i, j;
@@ -36,7 +35,6 @@ void print_grid(WINDOW *gameWin, int ROWS, int COLS)
 
     wrefresh(gameWin);
 }
-
 
 void session_write(char **mineboard, int COLS, int ROWS, int hitRow, int hitCol, const char *status)
 {
@@ -120,7 +118,6 @@ void sort_scorelog(FILE *scoreLog)
 
 }
 
-
 void game_won(WINDOW *gameWin, int yMiddle, int xMiddle)
 {
     wclear(gameWin);
@@ -132,7 +129,6 @@ void game_won(WINDOW *gameWin, int yMiddle, int xMiddle)
     refresh();
     wattroff(stdscr, A_BOLD);
 }
-
 
 void game_over(WINDOW *gameWin, char **mineboard, int yMiddle, int xMiddle)
 {

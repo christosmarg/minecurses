@@ -2,52 +2,45 @@
 
 void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int COLS, int ROWS, int NMINES)
 {
-    int mboardXLoc = 0, mboardYLoc = 0;
+    int mbx = 0, mby = 0;
     bool gameOver = false, cantFlag = false;
     int numDefused = 0;
     int yMax, xMax, yMiddle, xMiddle;
     char move;
     getmaxyx(stdscr, yMax, xMax);
-    yMiddle = yMax / 2;
-    xMiddle = xMax / 2;
+    yMiddle = yMax/2;
+    xMiddle = xMax/2;
 
-    print_board(gameWin, dispboard, COLS, ROWS);
+	print_board(gameWin, dispboard, COLS, ROWS);
     
     do
     {
-        navigate(gameWin, dispboard, &move, &mboardXLoc, &mboardYLoc);
+        navigate(gameWin, dispboard, &move, &mbx, &mby);
         
-        if (move == ENTER || move == OPEN_LOWER || move == OPEN_UPPER) // handle cell opening
+		if (move == ENTER || move == OPEN_LOWER || move == OPEN_UPPER) // handle cell opening
         {
-            transfer(dispboard, mineboard, mboardYLoc, mboardXLoc);
-            reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
-            cantFlag = true;
-            if (dispboard[mboardYLoc][mboardXLoc] == MINE) gameOver = true;
+			cantFlag = true;
+			open_cell(gameWin, dispboard, mineboard, mby, mbx, cantFlag, gameOver);
         }
         else if (move == FLAG_LOWER || move == FLAG_UPPER) // handle falgs
         {
-            if (dispboard[mboardYLoc][mboardXLoc] == FLAG) dispboard[mboardYLoc][mboardXLoc] = BLANK; // undo flag 
-            else if (dispboard[mboardYLoc][mboardXLoc] != FLAG && dispboard[mboardYLoc][mboardXLoc] != BLANK) continue; // dont flag an already opened mine
-            else dispboard[mboardYLoc][mboardXLoc] = FLAG; // flag if not flagged already
-            reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
+			handle_flags(gameWin, dispboard, mineboard, mby, mbx);
         }
         else if (move == DEFUSE_LOWER || move == DEFUSE_UPPER) // check for defuse
         {
-            if (dispboard[mboardYLoc][mboardXLoc] == FLAG && mineboard[mboardYLoc][mboardXLoc] == MINE) // is_mine replace
+			if (dispboard[mby][mbx] == FLAG && mineboard[mby][mbx] == MINE)
             {
-                numDefused++;
-                refresh();
-                dispboard[mboardYLoc][mboardXLoc] = mineboard[mboardYLoc][mboardXLoc] = DEFUSED;
-                reveal(gameWin, dispboard, mboardYLoc, mboardXLoc, mboardYLoc + 1, 3*mboardXLoc + 2);
+				numDefused++;
+				defuse_mine(gameWin, dispboard, mineboard, mby, mbx);
             }
-            else if (dispboard[mboardYLoc][mboardXLoc] == FLAG && mineboard[mboardYLoc][mboardXLoc] != MINE) gameOver = true; // handle false defusal               
+            else if (dispboard[mby][mbx] == FLAG && mineboard[mby][mbx] != MINE) gameOver = true;              
         }
         else if (move == PAUSE_AUDIO) pause_audio(); // handle audio
         else if (move == VOLUME_UP || move == VOLUME_DOWN) volume(move);
 
         mvprintw(1, xMiddle-8, "Defused mines: %d/%d", numDefused, NMINES);
         
-    } while (((mboardYLoc >= 0 && mboardYLoc < ROWS) && (mboardXLoc >= 0 && mboardXLoc < COLS)) &&
+    } while (((mby >= 0 && mby < ROWS) && (mbx >= 0 && mbx < COLS)) &&
              numDefused < NMINES && !gameOver && move != QUIT);
     
     if (gameOver == true)
@@ -55,33 +48,53 @@ void play_minesweeper(WINDOW *gameWin, char **dispboard, char **mineboard, int C
         game_over(gameWin, mineboard, yMiddle, xMiddle);
         getchar();
         print_board(gameWin, mineboard, COLS, ROWS);
-        session_write(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "lost");
+        session_write(mineboard, COLS, ROWS, mbx, mby, "lost");
     }
 
     if (numDefused == NMINES)
     {
         game_won(gameWin, yMiddle, xMiddle);
         getchar();
-        session_write(mineboard, COLS, ROWS, mboardXLoc, mboardYLoc, "won");
+        session_write(mineboard, COLS, ROWS, mbx, mby, "won");
         score_write(numDefused, COLS, ROWS);
     }
 }
 
-
-void transfer(char **dispboard, char **mineboard, int mboardYLoc, int mboardXLoc)
+bool open_cell(WINDOW *gameWin, char **dispboard, char **mineboard, int mby, int mbx, bool gameOver)
 {
-    dispboard[mboardYLoc][mboardXLoc] = mineboard[mboardYLoc][mboardXLoc];
+	transfer(dispboard, mineboard, mby, mbx);
+	reveal(gameWin, dispboard, mby, mbx, mby+1, 3*mbx+2);
+	if (dispboard[mby][mbx] == MINE) gameOver = true;
+	return gameOver;
 }
 
-
-void reveal(WINDOW *gameWin, char **dispboard, int mboardYLoc, int mboardXLoc, int yLoc, int xLoc)
+void handle_flags(WINDOW *gameWin, char **dispboard, char **mineboard, int mby, int mbx)
 {
-    mvwaddch(gameWin, yLoc, xLoc, dispboard[mboardYLoc][mboardXLoc]);
+	if (dispboard[mby][mbx] == FLAG) dispboard[mby][mbx] = BLANK; // undo flag 
+	else if (dispboard[mby][mbx] != FLAG && dispboard[mby][mbx] != BLANK) return; // dont flag an already opened mine
+	else dispboard[mby][mbx] = FLAG; // flag if not flagged already
+	reveal(gameWin, dispboard, mby, mbx, mby+1, 3*mbx+2);
+}
+
+void defuse_mine(WINDOW *gameWin, char **dispboard, char **mineboard, int mby, int mbx)
+{
+	refresh();
+	dispboard[mby][mbx] = mineboard[mby][mbx] = DEFUSED;
+	reveal(gameWin, dispboard, mby, mbx, mby+1, 3*mbx+2);
+}
+
+void transfer(char **dispboard, char **mineboard, int mby, int mbx)
+{
+    dispboard[mby][mbx] = mineboard[mby][mbx];
+}
+
+void reveal(WINDOW *gameWin, char **dispboard, int mby, int mbx, int yLoc, int xLoc)
+{
+    mvwaddch(gameWin, yLoc, xLoc, dispboard[mby][mbx]);
     wrefresh(gameWin);
 }
 
-
-bool is_defused(char **dispboard, char **mineboard, int mboardYLoc, int mboardXLoc)
+bool is_defused(char **dispboard, char **mineboard, int mby, int mbx)
 {
-    return ((dispboard[mboardYLoc][mboardXLoc] == DEFUSED)) ? true : false;
+    return ((dispboard[mby][mbx] == DEFUSED)) ? true : false;
 }

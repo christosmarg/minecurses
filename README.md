@@ -1,6 +1,6 @@
 # Minesweeper
 
-A simplistic minesweeper game using the `ncurses` library. The game was originally made as a university assignment of mine, but I decided to take it a bit further afterwards.
+A simplistic minesweeper game using the `ncurses` and `SDL2` libraries. The game was originally made as a university assignment of mine, but I decided to take it a bit further afterwards.
 
 ## How to play
 
@@ -25,6 +25,7 @@ Additional controls
 
 * Handle resizing
 * Add restart option
+* Load score log to ui
 * Add colors
 
 ## Execution

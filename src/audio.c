@@ -14,7 +14,6 @@ void *play_audio(void *threadID)
     Mix_CloseAudio();
 }
 
-
 void volume(char option)
 {
     static int volume = MIX_MAX_VOLUME;
@@ -31,7 +30,6 @@ void volume(char option)
             break;
     }
 }
-
 
 void pause_audio()
 {

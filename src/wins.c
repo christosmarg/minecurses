@@ -14,7 +14,6 @@ void main_win()
     wattroff(mainWin, A_BOLD);
 }
 
-
 WINDOW *menu_win(int *yMax, int *xMax)
 {
     int numSettings = 3;
@@ -27,11 +26,10 @@ WINDOW *menu_win(int *yMax, int *xMax)
     return menuWin;
 }
 
-
 WINDOW *game_win(int COLS, int ROWS, int NMINES)
 {
-    int winRows = ROWS + 2;
-    int winCols = COLS*3 + 2;
+    int winRows = ROWS+2;
+    int winCols = COLS*3+2;
     WINDOW *gameWin = newwin(winRows, winCols, 2, 4);
     wattron(gameWin, A_BOLD);
     box(gameWin, 0, 0);
@@ -39,7 +37,6 @@ WINDOW *game_win(int COLS, int ROWS, int NMINES)
     wattroff(gameWin, A_BOLD);
     return gameWin;
 }
-
 
 void options_menu()
 {

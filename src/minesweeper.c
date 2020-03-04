@@ -18,7 +18,6 @@ char **init_dispboard(WINDOW *gameWin, int COLS, int ROWS)
     return dispboard;
 }
 
-
 void fill_dispboard(char **dispboard, int COLS, int ROWS)
 {
     int i, j;
@@ -27,7 +26,6 @@ void fill_dispboard(char **dispboard, int COLS, int ROWS)
         for (j = 0; j < COLS; j++)
             dispboard[i][j] = BLANK;
 }
-
 
 char **init_mineboard(WINDOW *gameWin, int COLS, int ROWS, int NMINES)
 {
@@ -52,7 +50,6 @@ char **init_mineboard(WINDOW *gameWin, int COLS, int ROWS, int NMINES)
     return mineboard;
 }
 
-
 void place_mines(char **mineboard, int COLS, int ROWS, int NMINES)
 {
     int i, wRand, hRand;
@@ -67,7 +64,6 @@ void place_mines(char **mineboard, int COLS, int ROWS, int NMINES)
     }
 }
 
-
 void add_adj(char **mineboard, int COLS, int ROWS)
 {
     int i, j;
@@ -77,7 +73,6 @@ void add_adj(char **mineboard, int COLS, int ROWS)
             if (!is_mine(mineboard, i, j))
                 mineboard[i][j] = adj_mines(mineboard, i, j, COLS, ROWS) + '0';                
 }
-
 
 bool is_mine(char **mineboard, int row, int col)
 {
@@ -89,24 +84,21 @@ bool outof_bounds(int row, int col, int COLS, int ROWS)
     return (row < 0 || row > ROWS-1 || col < 0 || col > COLS-1) ? true : false;
 }
 
-
-
 int8_t adj_mines(char **mineboard, int row, int col, int COLS, int ROWS)
 {
     int8_t numAdj = 0;
 
-    if (!outof_bounds(row, col - 1, COLS, ROWS)      && mineboard[row][col-1]    == MINE) numAdj++; // North
-    if (!outof_bounds(row, col + 1, COLS, ROWS)      && mineboard[row][col+1]    == MINE) numAdj++; // South
-    if (!outof_bounds(row + 1, col, COLS, ROWS)      && mineboard[row+1][col]    == MINE) numAdj++; // East
-    if (!outof_bounds(row - 1, col, COLS, ROWS)      && mineboard[row-1][col]    == MINE) numAdj++; // West
-    if (!outof_bounds(row + 1, col - 1, COLS, ROWS)  && mineboard[row+1][col-1]  == MINE) numAdj++; // North-East
-    if (!outof_bounds(row - 1, col - 1, COLS, ROWS)  && mineboard[row-1][col-1]  == MINE) numAdj++; // North-West
-    if (!outof_bounds(row + 1, col + 1, COLS, ROWS)  && mineboard[row+1][col+1]  == MINE) numAdj++; // South-East
-    if (!outof_bounds(row - 1, col + 1, COLS, ROWS)  && mineboard[row-1][col+1]  == MINE) numAdj++; // South-West
+    if (!outof_bounds(row, col-1, COLS, ROWS)    && mineboard[row][col-1]    == MINE) numAdj++; // North
+    if (!outof_bounds(row, col+1, COLS, ROWS)    && mineboard[row][col+1]    == MINE) numAdj++; // South
+    if (!outof_bounds(row+1, col, COLS, ROWS)    && mineboard[row+1][col]    == MINE) numAdj++; // East
+    if (!outof_bounds(row-1, col, COLS, ROWS)    && mineboard[row-1][col]    == MINE) numAdj++; // West
+    if (!outof_bounds(row+1, col-1, COLS, ROWS)  && mineboard[row+1][col-1]  == MINE) numAdj++; // North-East
+    if (!outof_bounds(row-1, col-1, COLS, ROWS)  && mineboard[row-1][col-1]  == MINE) numAdj++; // North-West
+    if (!outof_bounds(row+1, col+1, COLS, ROWS)  && mineboard[row+1][col+1]  == MINE) numAdj++; // South-East
+    if (!outof_bounds(row-1, col+1, COLS, ROWS)  && mineboard[row-1][col+1]  == MINE) numAdj++; // South-West
 
     return numAdj;
 }
-
 
 void fill_spaces(char **mineboard, int COLS, int ROWS, int NMINES)
 {
