@@ -1,4 +1,4 @@
-TARGET = minesweeper
+TARGET = minecurses
 
 SRC_DIR = src
 OBJ_DIR = obj
