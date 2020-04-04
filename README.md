@@ -55,6 +55,6 @@ $ make clean # optional
 ## Preview
 
 ### Start screen
-![startmenu](https://user-images.githubusercontent.com/54286563/78460699-aceeef00-76cb-11ea-8e72-2b86a95f98fb.png)
+![startmenu](https://user-images.githubusercontent.com/54286563/78460772-52a25e00-76cc-11ea-976b-10212e228ca0.png)
 ### Gameplay
 ![gameplay](https://user-images.githubusercontent.com/54286563/78460709-bc6e3800-76cb-11ea-92f4-ab58e141e9be.png)
