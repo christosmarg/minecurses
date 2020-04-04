@@ -54,5 +54,5 @@ void fill_menu(WINDOW *opts)
 	mvwprintw(opts, 9, 1, "+	Volume up");
 	mvwprintw(opts, 10, 1, "-	Volume down");
 	mvwprintw(opts, 11, 1, "[ENTER]/o Open cell");
-	mvwprintw(opts, 13, 1, "Press m to quit the menu");
+	mvwprintw(opts, 13, 1, "Press any key to quit the menu");
 }
