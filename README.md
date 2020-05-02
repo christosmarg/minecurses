@@ -26,7 +26,7 @@ Additional controls
 
 ## To Do
 
-* Add restart option
+* Add more error checks
 * Add quit option right when game opens
 * Load score log to ui
 * Add colors

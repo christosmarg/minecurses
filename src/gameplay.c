@@ -1,6 +1,7 @@
 #include "gameplay.h"
+#include "main.h"
 
-void play_minesweeper(WINDOW *gamew, Board *brd)
+void play(WINDOW *gamew, Board *brd)
 {
 	int mbx = 0, mby = 0;
 	int gameover = FALSE;
@@ -43,6 +44,10 @@ void play_minesweeper(WINDOW *gamew, Board *brd)
 				break;
 			case 'm':
 				handle_menu(gamew, brd);
+				break;
+			case 'r':
+				reset(brd);
+				init_game(gamew, brd);
 				break;
 			default: break;
 		}
