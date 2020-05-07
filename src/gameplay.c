@@ -115,13 +115,13 @@ void handle_gameover(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int
 	box(gamew, 0, 0);
 	print_board(gamew, brd);
 	wrefresh(gamew);
-	session_write(brd, mbx, mby, "lost");
+	session_write(brd, mbx, mby, GAME_LOST);
 }
 
 void handle_win(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int mbx, int ndefused)
 {
 	game_won(gamew, ymid, xmid);
 	getchar();
-	session_write(brd, mbx, mby, "won");
+	session_write(brd, mbx, mby, GAME_WON);
 	score_write(ndefused, brd->rows, brd->cols);
 }

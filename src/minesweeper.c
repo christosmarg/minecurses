@@ -9,7 +9,7 @@ char **init_db(WINDOW *gamew, int cols, int rows)
 
     if (db == NULL)
     {
-        mvprintw(1, 1, "Error, not enough memory, exiting...");
+        mvprintw(0, 0, "Error, not enough memory, exiting...");
         refresh();
         exit(EXIT_FAILURE);
     }
@@ -82,7 +82,7 @@ int outof_bounds(int row, int col, int cols, int rows)
 
 uint8_t adj_mines(char **mb, int row, int col, int cols, int rows)
 {
-	int8_t nadj = 0;
+	uint8_t nadj = 0;
 
 	if (!outof_bounds(row, col-1, cols, rows)    && mb[row][col-1]    == MINE) nadj++; // north
 	if (!outof_bounds(row, col+1, cols, rows)    && mb[row][col+1]    == MINE) nadj++; // south
