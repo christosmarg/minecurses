@@ -10,8 +10,7 @@
 #define YMAX getmaxy(stdscr)
 #define XMAX getmaxx(stdscr)
 
-typedef struct
-{
+typedef struct {
 	char **db;
 	char **mb;
 	int rows, cols, nmines;

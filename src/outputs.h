@@ -7,7 +7,10 @@
 #define SESSION_PATH "log/session.txt"
 #define SCORE_LOG_PATH "log/scorelog.csv"
 
-typedef enum {GAME_WON, GAME_LOST} State;
+typedef enum {
+	GAME_WON,
+	GAME_LOST
+} State;
 
 void print_board	(struct _win_st* gamew, Board *brd);
 void print_grid		(struct _win_st* gamew, int rows, int cols);

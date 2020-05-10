@@ -1,7 +1,8 @@
 #include "gameplay.h"
 #include "main.h"
 
-void play(WINDOW *gamew, Board *brd)
+void
+play(WINDOW *gamew, Board *brd)
 {
 	int mbx = 0, mby = 0;
 	int gameover = FALSE;
@@ -46,6 +47,7 @@ void play(WINDOW *gamew, Board *brd)
 				handle_menu(gamew, brd);
 				break;
 			case 'r':
+				clear_board(brd);
 				reset(brd);
 				init_game(gamew, brd);
 				break;
@@ -60,7 +62,8 @@ void play(WINDOW *gamew, Board *brd)
 		handle_win(gamew, brd, ymid, xmid, mby, mbx, ndefused);
 }
 
-int open_cell(WINDOW *gamew, Board *brd, int mby, int mbx, int gameover)
+int
+open_cell(WINDOW *gamew, Board *brd, int mby, int mbx, int gameover)
 {
 	transfer(brd, mby, mbx);
 	reveal(gamew, brd, mby, mbx, mby+1, 3*mbx+2);
@@ -68,7 +71,8 @@ int open_cell(WINDOW *gamew, Board *brd, int mby, int mbx, int gameover)
 	return gameover;
 }
 
-void handle_flags(WINDOW *gamew, Board *brd, int mby, int mbx)
+void
+handle_flags(WINDOW *gamew, Board *brd, int mby, int mbx)
 {
 	if (brd->db[mby][mbx] == FLAG) brd->db[mby][mbx] = BLANK;
 	else if (brd->db[mby][mbx] != FLAG && brd->db[mby][mbx] != BLANK) return;
@@ -76,37 +80,43 @@ void handle_flags(WINDOW *gamew, Board *brd, int mby, int mbx)
 	reveal(gamew, brd, mby, mbx, mby+1, 3*mbx+2);
 }
 
-void defuse_mine(WINDOW *gamew, Board *brd, int mby, int mbx)
+void
+defuse_mine(WINDOW *gamew, Board *brd, int mby, int mbx)
 {
 	refresh();
 	brd->db[mby][mbx] = brd->mb[mby][mbx] = DEFUSED;
 	reveal(gamew, brd, mby, mbx, mby+1, 3*mbx+2);
 }
 
-void transfer(Board *brd, int mby, int mbx)
+void
+transfer(Board *brd, int mby, int mbx)
 {
 	brd->db[mby][mbx] = brd->mb[mby][mbx];
 }
 
-void reveal(WINDOW *gamew, Board *brd, int mby, int mbx, int y, int x)
+void
+reveal(WINDOW *gamew, Board *brd, int mby, int mbx, int y, int x)
 {
 	mvwaddch(gamew, y, x, brd->db[mby][mbx]);
 	wrefresh(gamew);
 }
 
-int is_defused(Board *brd, int mby, int mbx)
+int
+is_defused(Board *brd, int mby, int mbx)
 {
 	return (brd->db[mby][mbx] == DEFUSED) ? TRUE : FALSE;
 }
 
-void handle_menu(WINDOW *gamew, Board *brd)
+void
+handle_menu(WINDOW *gamew, Board *brd)
 {
 	options_menu();
 	box(gamew, 0, 0);
 	print_board(gamew, brd);
 }
 
-void handle_gameover(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int mbx)
+void
+handle_gameover(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int mbx)
 {
 	game_over(gamew, ymid, xmid);
 	getchar();
@@ -118,7 +128,8 @@ void handle_gameover(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int
 	session_write(brd, mbx, mby, GAME_LOST);
 }
 
-void handle_win(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int mbx, int ndefused)
+void
+handle_win(WINDOW *gamew, Board *brd, int ymid, int xmid, int mby, int mbx, int ndefused)
 {
 	game_won(gamew, ymid, xmid);
 	getchar();

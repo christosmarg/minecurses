@@ -1,6 +1,7 @@
 #include "navigation.h"
 
-void navigate(WINDOW *gamew, int *move, int *mbx, int *mby)
+void
+navigate(WINDOW *gamew, int *move, int *mbx, int *mby)
 {
 	int ymax, xmax;
 	getmaxyx(gamew, ymax, xmax);
@@ -12,7 +13,8 @@ void navigate(WINDOW *gamew, int *move, int *mbx, int *mby)
 	getmv(gamew, move, &y, &x, ymax, xmax);
 }
 
-void getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
+void
+getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
 {
 	*move = wgetch(gamew);
 	switch (*move) // vim keys support!!
@@ -36,31 +38,36 @@ void getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
 	}
 }
 
-void mvup(int *y)
+void
+mvup(int *y)
 {
 	(*y)--;
 	if (*y < 1) *y = 1;
 }
 
-void mvdown(int *y, int ymax)
+void
+mvdown(int *y, int ymax)
 {
 	(*y)++;
 	if (*y > ymax-2) *y = ymax-2;
 }
 
-void mvleft(int *x)
+void
+mvleft(int *x)
 {
 	*x -= 3;
 	if (*x < 2) *x = 2;
 }
 
-void mvright(int *x, int xmax)
+void
+mvright(int *x, int xmax)
 {
 	*x += 3;
 	if (*x > xmax-3) *x = xmax-3;
 }
 
-void update_curs(WINDOW *gamew, int y, int x)
+void
+update_curs(WINDOW *gamew, int y, int x)
 {
 	wmove(gamew, y, x);
 }

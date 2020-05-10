@@ -1,6 +1,7 @@
 #include "minesweeper.h"
 
-char **init_db(WINDOW *gamew, int cols, int rows)
+char **
+init_db(WINDOW *gamew, int cols, int rows)
 {
     int i;
     char **db = (char **)malloc(rows * sizeof(char *));
@@ -18,7 +19,8 @@ char **init_db(WINDOW *gamew, int cols, int rows)
     return db;
 }
 
-void fill_db(char **db, int cols, int rows)
+void
+fill_db(char **db, int cols, int rows)
 {
 	int i, j;
 	for (i = 0; i < rows; i++)
@@ -26,7 +28,8 @@ void fill_db(char **db, int cols, int rows)
 			db[i][j] = BLANK;
 }
 
-char **init_mb(WINDOW *gamew, int cols, int rows, int nmines)
+char **
+init_mb(WINDOW *gamew, int cols, int rows, int nmines)
 {
     int i;
     char **mb = (char **)malloc(rows * sizeof(char *));
@@ -49,7 +52,8 @@ char **init_mb(WINDOW *gamew, int cols, int rows, int nmines)
     return mb;
 }
 
-void place_mines(char **mb, int cols, int rows, int nmines)
+void
+place_mines(char **mb, int cols, int rows, int nmines)
 {
 	int i, wrand, hrand;
 	srand(time(NULL));
@@ -61,7 +65,8 @@ void place_mines(char **mb, int cols, int rows, int nmines)
 	}
 }
 
-void add_adj(char **mb, int cols, int rows)
+void
+add_adj(char **mb, int cols, int rows)
 {
 	int i, j;
 	for (i = 0; i < rows; i++)
@@ -70,17 +75,20 @@ void add_adj(char **mb, int cols, int rows)
 				mb[i][j] = adj_mines(mb, i, j, cols, rows) + '0';                
 }
 
-int is_mine(char **mb, int row, int col)
+int
+is_mine(char **mb, int row, int col)
 {
 	return (mb[row][col] == MINE) ? TRUE : FALSE;
 }
 
-int outof_bounds(int row, int col, int cols, int rows)
+int
+outof_bounds(int row, int col, int cols, int rows)
 {
 	return (row < 0 || row > rows-1 || col < 0 || col > cols-1) ? TRUE : FALSE;
 }
 
-uint8_t adj_mines(char **mb, int row, int col, int cols, int rows)
+uint8_t
+adj_mines(char **mb, int row, int col, int cols, int rows)
 {
 	uint8_t nadj = 0;
 
@@ -96,7 +104,8 @@ uint8_t adj_mines(char **mb, int row, int col, int cols, int rows)
 	return nadj;
 }
 
-void fill_spaces(char **mb, int cols, int rows, int nmines)
+void
+fill_spaces(char **mb, int cols, int rows, int nmines)
 {
 	int i, j;
 	for (i = 0; i < rows; i++)

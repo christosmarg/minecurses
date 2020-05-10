@@ -6,7 +6,8 @@
 #include "wins.h"
 #include <pthread.h>
 
-int main(int argc, char **argv)
+int
+main(int argc, char **argv)
 {	
 	Board brd;
 	init_curses();
@@ -26,7 +27,8 @@ int main(int argc, char **argv)
 	return 0;
 }
 
-void reset(Board *brd)
+void
+reset(Board *brd)
 {
 	echo();
 	brd->cols = set_cols();
@@ -38,13 +40,15 @@ void reset(Board *brd)
 	refresh();
 }
 
-void init_game(WINDOW *gamew, Board *brd)
+void
+init_game(WINDOW *gamew, Board *brd)
 {
 	brd->db = init_db(gamew, brd->cols, brd->rows);
 	brd->mb = init_mb(gamew, brd->cols, brd->rows, brd->nmines);
 }
 
-void clear_board(Board *brd)
+void
+clear_board(Board *brd)
 {
 	int i;
 	for (i = 0; i < brd->rows; i++)

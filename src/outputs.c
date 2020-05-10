@@ -1,6 +1,7 @@
 #include "outputs.h"
 
-void print_board(WINDOW *gamew, Board *brd)
+void
+print_board(WINDOW *gamew, Board *brd)
 {    
 	int i, j, x, y = 1;
 	print_grid(gamew, brd->rows, brd->cols);
@@ -17,7 +18,8 @@ void print_board(WINDOW *gamew, Board *brd)
 	}
 }
 
-void print_grid(WINDOW *gamew, int rows, int cols)
+void
+print_grid(WINDOW *gamew, int rows, int cols)
 {
 	int i, j;
 	wattroff(gamew, A_BOLD);
@@ -30,14 +32,16 @@ void print_grid(WINDOW *gamew, int rows, int cols)
 	wrefresh(gamew);
 }
 
-void session_info(int mbx, int mby, int xmid, int ndefused, int nmines)
+void
+session_info(int mbx, int mby, int xmid, int ndefused, int nmines)
 {
 	mvprintw(0, 0, "Current position: (%d, %d) ", mbx, mby);
 	mvprintw(0, xmid-strlen("Defused mines: x/x")/2, "Defused mines: %d/%d", ndefused, nmines);
 	mvprintw(0, XMAX-strlen("m Controls"), "m Controls");
 }
 
-void session_write(Board *brd, int hitrow, int hitcol, State state)
+void
+session_write(Board *brd, int hitrow, int hitcol, State state)
 {
 	int i, j;
 	FILE *fsession = fopen(SESSION_PATH, "w");
@@ -63,7 +67,8 @@ void session_write(Board *brd, int hitrow, int hitcol, State state)
 	fclose(fsession);
 }
 
-void score_write(int ndefused, int cols, int rows)
+void
+score_write(int ndefused, int cols, int rows)
 {
 	FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
 	char *playername = get_pname();
@@ -87,7 +92,8 @@ void score_write(int ndefused, int cols, int rows)
 	free(playername);
 }
 
-char *get_pname(void)
+char *
+get_pname(void)
 {   
 	char buffer[20];
 	char *playername;
@@ -103,22 +109,26 @@ char *get_pname(void)
 	return (strcpy(playername, buffer));
 }
 
-void sort_scorelog(FILE *scorelog)
+void
+sort_scorelog(FILE *scorelog)
 {
 
 }
 
-void show_scorelog(FILE *scorelog)
+void
+show_scorelog(FILE *scorelog)
 {
 
 }
 
-void parse_data(FILE *scorelog)
+void
+parse_data(FILE *scorelog)
 {
 
 }
 
-void game_won(WINDOW *gamew, int ymid, int xmid)
+void
+game_won(WINDOW *gamew, int ymid, int xmid)
 {
 	wclear(gamew);
 	wrefresh(gamew);
@@ -130,7 +140,8 @@ void game_won(WINDOW *gamew, int ymid, int xmid)
 	attroff(A_BOLD);
 }
 
-void game_over(WINDOW *gamew, int ymid, int xmid)
+void
+game_over(WINDOW *gamew, int ymid, int xmid)
 {
 	wclear(gamew);
 	wrefresh(gamew);

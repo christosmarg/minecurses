@@ -1,6 +1,7 @@
 #include "settings.h"
 
-int set_cols(void)
+int
+set_cols(void)
 {
     int cols;
     do
@@ -13,7 +14,8 @@ int set_cols(void)
     return cols;    
 }
 
-int set_rows(void)
+int
+set_rows(void)
 {
     int rows;
     do
@@ -26,7 +28,8 @@ int set_rows(void)
     return rows;
 }
 
-int set_nmines(int dimensions)
+int
+set_nmines(int dimensions)
 {
     int nmines;
     do

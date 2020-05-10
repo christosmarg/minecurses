@@ -1,13 +1,15 @@
 #include "wins.h"
 
-void init_curses(void)
+void
+init_curses(void)
 {
     initscr();
     noecho();
     cbreak();
 }
 
-WINDOW *game_win(int rows, int cols)
+WINDOW *
+game_win(int rows, int cols)
 {
 	int wrows = rows+2;
 	int wcols = cols*3+2;
@@ -21,7 +23,8 @@ WINDOW *game_win(int rows, int cols)
 	return gamew;
 }
 
-void options_menu(void)
+void
+options_menu(void)
 {
 	int w = 33, h = 15;
 	int wy = YMAX/2 - h/2;
@@ -37,7 +40,8 @@ void options_menu(void)
 	delwin(opts);
 }
 
-void fill_menu(WINDOW *opts)
+void
+fill_menu(WINDOW *opts)
 {
 	mvwprintw(opts, 1, 1, "q	Quit");
 	mvwprintw(opts, 2, 1, "w/k	Move up");
