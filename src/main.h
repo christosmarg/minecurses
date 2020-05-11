@@ -16,6 +16,8 @@ typedef struct {
 	int rows, cols, nmines;
 } Board;
 
+extern Board brd;
+
 void reset(Board *brd);
 void init_game(WINDOW *gamew, Board *brd);
 void clear_board(Board *brd);
