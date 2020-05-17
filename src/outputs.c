@@ -4,7 +4,7 @@ void
 print_board(WINDOW *gw, Board *b)
 {    
 	int i, j, x, y = 1;
-	print_grid(gw, b->rows, b->cols);
+	print_grid(gw, b);
 	wattron(gw, A_BOLD);
 	for (i = 0; i < b->rows; i++)
 	{
@@ -19,14 +19,14 @@ print_board(WINDOW *gw, Board *b)
 }
 
 void
-print_grid(WINDOW *gw, int rows, int cols)
+print_grid(WINDOW *gw, Board *b)
 {
 	int i, j;
 	wattroff(gw, A_BOLD);
-	for (i = 1; i <= rows; i++)
+	for (i = 1; i <= b->rows; i++)
 	{
 		wmove(gw, i, 1);
-		for (j = 0; j < cols; j++)
+		for (j = 0; j < b->cols; j++)
 			wprintw(gw, "[ ]");
 	}
 	wrefresh(gw);
@@ -36,15 +36,16 @@ print_grid(WINDOW *gw, int rows, int cols)
 #define XMID(x) getmaxx(x)/2
 
 void
-session_info(int mbx, int mby, int ndefused, int nmines)
+session_info(Board *b)
 {
-	mvprintw(0, 0, "Current position: (%d, %d) ", mbx, mby);
-	mvprintw(0, XMID(stdscr)-strlen("Defused mines: x/x")/2, "Defused mines: %d/%d", ndefused, nmines);
+	mvprintw(0, 0, "Current position: (%d, %d) ", b->x, b->y);
+	mvprintw(0, XMID(stdscr)-strlen("Defused mines: x/x")/2,
+			"Defused mines: %d/%d", b->ndefused, b->nmines);
 	mvprintw(0, XMAX(stdscr)-strlen("m Controls"), "m Controls");
 }
 
 void
-session_write(Board *b, int hitrow, int hitcol, State state)
+session_write(Board *b, State state)
 {
 	int i, j;
 	FILE *fsession = fopen(SESSION_PATH, "w");
@@ -57,8 +58,10 @@ session_write(Board *b, int hitrow, int hitcol, State state)
 	else
 	{
 		state == GAME_WON
-			? fprintf(fsession, "Mine hit at position (%d, %d)\n\n", hitrow+1, hitcol+1)
-			: fprintf(fsession, "Last mine defused at position (%d, %d)\n\n", hitrow+1, hitcol+1);
+			? fprintf(fsession, "Mine hit at position (%d, %d)\n\n",
+					b->x+1, b->y+1)
+			: fprintf(fsession, "Last mine defused at position (%d, %d)\n\n",
+					b->x+1, b->y+1);
 		fprintf(fsession, "Board overview\n\n");
 		for (i = 0; i < b->rows; i++)
 		{
@@ -71,7 +74,7 @@ session_write(Board *b, int hitrow, int hitcol, State state)
 }
 
 void
-score_write(int ndefused, int cols, int rows)
+score_write(Board *b)
 {
 	FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
 	char *playername = get_pname();
@@ -83,7 +86,8 @@ score_write(int ndefused, int cols, int rows)
 	}
 	else
 	{
-		fprintf(scorelog, "%s,%d,%dx%d\n", playername, ndefused, cols, rows);
+		fprintf(scorelog, "%s,%d,%dx%d\n",
+				playername, b->ndefused, b->cols, b->rows);
 		sort_scorelog(scorelog);
 		clrtoeol();
 		show_scorelog(scorelog);

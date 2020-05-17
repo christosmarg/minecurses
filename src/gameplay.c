@@ -1,12 +1,15 @@
 #include "gameplay.h"
 #include "main.h"
 
+#define X b->x
+#define Y b->y
+
 void
 play(WINDOW *gw, Board *b)
 {
-	int mbx = 0, mby = 0;
-	int gameover = FALSE;
-	int ndefused = 0;
+	b->x = b->y = 0;
+	b->gameover = FALSE;
+	b->ndefused = 0;
 	int move;
 
 	do
@@ -16,28 +19,34 @@ play(WINDOW *gw, Board *b)
 		refresh();
 		gw = game_win(b->rows, b->cols);
 		print_board(gw, b);
-		session_info(mbx, mby, ndefused, b->nmines);
-		navigate(gw, &move, &mbx, &mby);
+		session_info(b);
+		navigate(gw, &move, b);
 		switch (move)
 		{
-			case ENTER: case OPEN_LOWER: case OPEN_UPPER:
-				gameover = open_cell(gw, b, mby, mbx, gameover);
+			case ENTER:			/* FALLTHROUGH */
+			case OPEN_LOWER:
+			case OPEN_UPPER:
+				b->gameover = open_cell(gw, b);
 				break;
-			case FLAG_LOWER: case FLAG_UPPER:
-				handle_flags(gw, b, mby, mbx);
+			case FLAG_LOWER:	/* FALLTHROUGH */
+			case FLAG_UPPER:
+				handle_flags(gw, b);
 				break;
-			case DEFUSE_LOWER: case DEFUSE_UPPER:
-				if (b->db[mby][mbx] == FLAG && b->mb[mby][mbx] == MINE)
+			case DEFUSE_LOWER:	/* FALLTHROUGH */
+			case DEFUSE_UPPER:
+				if (b->db[Y][X] == FLAG && b->mb[Y][X] == MINE)
 				{
-					ndefused++;
-					defuse_mine(gw, b, mby, mbx);
+					b->ndefused++;
+					defuse_mine(gw, b);
 				}
-				else if (b->db[mby][mbx] == FLAG && b->mb[mby][mbx] != MINE) gameover = TRUE;              
+				else if (b->db[Y][X] == FLAG && b->mb[Y][X] != MINE)
+					b->gameover = TRUE;              
 				break;
 			case PAUSE_AUDIO:
 				pause_audio();
 				break;
-			case VOLUME_UP: case VOLUME_DOWN:
+			case VOLUME_UP:		/* FALLTHROUGH */
+			case VOLUME_DOWN:
 				volume(move);
 				break;
 			case 'm':
@@ -50,58 +59,64 @@ play(WINDOW *gw, Board *b)
 				break;
 			default: break;
 		}
-	} while (((mby >= 0 && mby < b->rows) && (mbx >= 0 && mbx < b->cols)) &&
-			 ndefused < b->nmines && !gameover && move != QUIT);	
+	} while (((Y >= 0 && Y < b->rows) &&
+			(X >= 0 && X < b->cols))  &&
+			b->ndefused < b->nmines && !b->gameover &&
+			move != QUIT);	
 
-	if (gameover)
-		handle_gameover(gw, b, mby, mbx);
-	if (ndefused == b->nmines)
-		handle_win(gw, b, mby, mbx, ndefused);
+	if (b->gameover)
+		handle_gameover(gw, b);
+	if (b->ndefused == b->nmines)
+		handle_win(gw, b);
 }
 
 int
-open_cell(WINDOW *gw, Board *b, int mby, int mbx, int gameover)
+open_cell(WINDOW *gw, Board *b)
 {
-	transfer(b, mby, mbx);
-	reveal(gw, b, mby, mbx, mby+1, 3*mbx+2);
-	if (b->db[mby][mbx] == MINE) gameover = TRUE;
-	return gameover;
+	transfer(b);
+	reveal(gw, b);
+	return (b->db[Y][X] == MINE) ? TRUE : FALSE;
 }
 
 void
-handle_flags(WINDOW *gw, Board *b, int mby, int mbx)
+handle_flags(WINDOW *gw, Board *b)
 {
-	if (b->db[mby][mbx] == FLAG) b->db[mby][mbx] = BLANK;
-	else if (b->db[mby][mbx] != FLAG && b->db[mby][mbx] != BLANK) return;
-	else b->db[mby][mbx] = FLAG;
-	reveal(gw, b, mby, mbx, mby+1, 3*mbx+2);
+	if (b->db[Y][X] == FLAG)
+		b->db[Y][X] = BLANK;
+	else if (b->db[Y][X] != FLAG &&
+			 b->db[Y][X] != BLANK)
+		return;
+	else b->db[Y][X] = FLAG;
+	reveal(gw, b);
 }
 
 void
-defuse_mine(WINDOW *gw, Board *b, int mby, int mbx)
+defuse_mine(WINDOW *gw, Board *b)
 {
 	refresh();
-	b->db[mby][mbx] = b->mb[mby][mbx] = DEFUSED;
-	reveal(gw, b, mby, mbx, mby+1, 3*mbx+2);
+	b->db[Y][X] = b->mb[Y][X] = DEFUSED;
+	reveal(gw, b);
 }
 
 void
-transfer(Board *b, int mby, int mbx)
+transfer(Board *b)
 {
-	b->db[mby][mbx] = b->mb[mby][mbx];
+	b->db[Y][X] = b->mb[Y][X];
 }
 
 void
-reveal(WINDOW *gw, Board *b, int mby, int mbx, int y, int x)
+reveal(WINDOW *gw, Board *b)
 {
-	mvwaddch(gw, y, x, b->db[mby][mbx]);
+	int y = b->y + 1;
+	int x = 3 * b->x + 2;
+	mvwaddch(gw, y, x, b->db[Y][X]);
 	wrefresh(gw);
 }
 
 int
-is_defused(Board *b, int mby, int mbx)
+is_defused(Board *b)
 {
-	return (b->db[mby][mbx] == DEFUSED) ? TRUE : FALSE;
+	return (b->db[Y][X] == DEFUSED) ? TRUE : FALSE;
 }
 
 void
@@ -113,7 +128,7 @@ handle_menu(WINDOW *gw, Board *b)
 }
 
 void
-handle_gameover(WINDOW *gw, Board *b, int mby, int mbx)
+handle_gameover(WINDOW *gw, Board *b)
 {
 	game_over(gw);
 	getchar();
@@ -122,14 +137,17 @@ handle_gameover(WINDOW *gw, Board *b, int mby, int mbx)
 	box(gw, 0, 0);
 	print_board(gw, b);
 	wrefresh(gw);
-	session_write(b, mbx, mby, GAME_LOST);
+	session_write(b, GAME_LOST);
 }
 
 void
-handle_win(WINDOW *gw, Board *b, int mby, int mbx, int ndefused)
+handle_win(WINDOW *gw, Board *b)
 {
 	game_won(gw);
 	getchar();
-	session_write(b, mbx, mby, GAME_WON);
-	score_write(ndefused, b->rows, b->cols);
+	session_write(b, GAME_WON);
+	score_write(b);
 }
+
+#undef Y
+#undef X

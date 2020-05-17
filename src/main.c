@@ -35,6 +35,8 @@ reset(Board *b)
 	b->cols = set_cols();
 	b->rows = set_rows();
 	b->nmines = set_nmines(b->rows * b->cols);
+	b->ndefused = b->x = b->y = 0;
+	b->gameover = FALSE;
 	noecho();
 	options_menu();
 	erase();

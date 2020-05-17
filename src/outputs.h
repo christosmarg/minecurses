@@ -13,10 +13,10 @@ typedef enum {
 } State;
 
 void print_board  (struct _win_st* gw, Board *b);
-void print_grid	  (struct _win_st* gw, int rows, int cols);
-void session_info (int mbx, int mby, int ndefused, int nmines);
-void session_write(Board *b, int hitrow, int hitcol, State state);
-void score_write  (int ndefused, int cols, int rows);
+void print_grid	  (struct _win_st* gw, Board *b);
+void session_info (Board *b);
+void session_write(Board *b, State state);
+void score_write  (Board *b);
 char *get_pname	  (void);
 void sort_scorelog(FILE *scorelog);
 void show_scorelog(FILE *scorelog);

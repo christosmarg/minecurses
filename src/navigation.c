@@ -1,12 +1,12 @@
 #include "navigation.h"
 
 void
-navigate(WINDOW *gw, int *mv, int *mbx, int *mby)
+navigate(WINDOW *gw, int *mv, Board *b)
 {
 	static int y = 1, x = 2;
 	update_curs(gw, y, x);
-	*mbx = (x-2)/3;
-	*mby = y-1;
+	b->x = (x-2)/3;
+	b->y = y-1;
 	refresh();
 	getmv(gw, mv, &y, &x);
 }

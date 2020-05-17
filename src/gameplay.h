@@ -24,14 +24,14 @@
 #define QUIT 'q'
 
 void play			(struct _win_st* gw, Board *b);
-int open_cell		(struct _win_st* gw, Board *b, int mby, int mbx, int gameover);
-void handle_flags	(struct _win_st* gw, Board *b, int mby, int mbx);
-void defuse_mine	(struct _win_st* gw, Board *b, int mby, int mbx);
-void transfer		(Board *b, int mby, int mbx);
-void reveal			(struct _win_st* gw, Board *b, int mby, int mbx, int y, int x);
-int is_defused		(Board *b, int mby, int mbx);
+int open_cell		(struct _win_st* gw, Board *b);
+void handle_flags	(struct _win_st* gw, Board *b);
+void defuse_mine	(struct _win_st* gw, Board *b);
+void transfer		(Board *b);
+void reveal			(struct _win_st* gw, Board *b);
+int is_defused		(Board *b);
 void handle_menu	(struct _win_st*, Board *b);
-void handle_gameover(struct _win_st* gw, Board *b, int mby, int mbx);
-void handle_win		(struct _win_st* gw, Board *b, int mby, int mbx, int ndefused);
+void handle_gameover(struct _win_st* gw, Board *b);
+void handle_win		(struct _win_st* gw, Board *b);
 
 #endif /* GAMEPLAY_H */
