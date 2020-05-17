@@ -6,11 +6,12 @@ set_cols(void)
     int cols;
     do
     {
-        mvprintw(YMAX-4, 1, "Columns (Min = 5, Max = %d): ", (XMAX-2)/3-2);
+        mvprintw(YMAX(stdscr)-4, 1, "Columns (Min = 5, Max = %d): ",
+				(XMAX(stdscr)-2)/3-2);
 		refresh();
         scanw("%d", &cols);
 		refresh();
-    } while (cols < 5 || cols > (XMAX-2)/3-2);
+    } while (cols < 5 || cols > (XMAX(stdscr)-2)/3-2);
     return cols;    
 }
 
@@ -20,11 +21,12 @@ set_rows(void)
     int rows;
     do
     {
-        mvprintw(YMAX-3, 1, "Rows (Min = 5, Max = %d): ", YMAX-4);
+        mvprintw(YMAX(stdscr)-3, 1, "Rows (Min = 5, Max = %d): ",
+				YMAX(stdscr)-4);
 		refresh();
         scanw("%d", &rows);
 		refresh();
-    } while (rows < 5 || rows > YMAX-4); 
+    } while (rows < 5 || rows > YMAX(stdscr)-4); 
     return rows;
 }
 
@@ -34,7 +36,7 @@ set_nmines(int dimensions)
     int nmines;
     do
     {
-        mvprintw(YMAX-2, 1, "Mines (Max = %d): ", dimensions-15);
+        mvprintw(YMAX(stdscr)-2, 1, "Mines (Max = %d): ", dimensions-15);
         refresh();
         scanw("%d", &nmines);
         refresh();

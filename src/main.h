@@ -3,12 +3,11 @@
 
 #if defined linux || defined __unix__ || defined __APPLE__
 #include <ncurses.h>
-#endif
-
+#endif /* defined linux || defined __unix__ || defined __APPLE__ */
 #include <stdlib.h>
 
-#define YMAX getmaxy(stdscr)
-#define XMAX getmaxx(stdscr)
+#define YMAX(x) getmaxy(x)
+#define XMAX(x) getmaxx(x)
 
 typedef struct {
 	char **db;
@@ -16,10 +15,10 @@ typedef struct {
 	int rows, cols, nmines;
 } Board;
 
-extern Board brd;
+extern Board b;
 
-void reset(Board *brd);
-void init_game(WINDOW *gamew, Board *brd);
-void clear_board(Board *brd);
+void reset(Board *b);
+void init_game(WINDOW *gw, Board *b);
+void clear_board(Board *b);
 
 #endif /* MAIN_H */

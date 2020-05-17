@@ -1,23 +1,21 @@
 #include "navigation.h"
 
 void
-navigate(WINDOW *gamew, int *move, int *mbx, int *mby)
+navigate(WINDOW *gw, int *mv, int *mbx, int *mby)
 {
-	int ymax, xmax;
-	getmaxyx(gamew, ymax, xmax);
 	static int y = 1, x = 2;
-	update_curs(gamew, y, x);
+	update_curs(gw, y, x);
 	*mbx = (x-2)/3;
 	*mby = y-1;
 	refresh();
-	getmv(gamew, move, &y, &x, ymax, xmax);
+	getmv(gw, mv, &y, &x);
 }
 
 void
-getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
+getmv(WINDOW *gw, int *mv, int *y, int *x)
 {
-	*move = wgetch(gamew);
-	switch (*move) // vim keys support!!
+	*mv = wgetch(gw);
+	switch (*mv) // vim keys support!!
 	{
 		case 'k': case 'K':
 		case 'w': case 'W':
@@ -25,7 +23,7 @@ getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
 			break;
 		case 'j': case 'J':
 		case 's': case 'S':
-			mvdown(y, ymax);
+			mvdown(y, YMAX(gw));
 			break;
 		case 'h': case 'H':
 		case 'a': case 'A':
@@ -33,7 +31,7 @@ getmv(WINDOW *gamew, int *move, int *y, int *x, int ymax, int xmax)
 			break;
 		case 'l': case 'L':
 		case 'd': case 'D':
-			mvright(x, xmax);
+			mvright(x, XMAX(gw));
 			break;
 	}
 }
@@ -67,7 +65,7 @@ mvright(int *x, int xmax)
 }
 
 void
-update_curs(WINDOW *gamew, int y, int x)
+update_curs(WINDOW *gw, int y, int x)
 {
-	wmove(gamew, y, x);
+	wmove(gw, y, x);
 }
