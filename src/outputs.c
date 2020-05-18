@@ -1,17 +1,17 @@
 #include "outputs.h"
 
 void
-print_board(WINDOW *gw, Board *b)
+print_board(Board *b)
 {    
 	int i, j, x, y = 1;
-	print_grid(gw, b);
-	wattron(gw, A_BOLD);
+	print_grid(b);
+	wattron(b->gw, A_BOLD);
 	for (i = 0; i < b->rows; i++)
 	{
 		x = 2; 
 		for (j = 0; j < b->cols; j++)
 		{
-			mvwaddch(gw, y, x, b->db[i][j]);
+			mvwaddch(b->gw, y, x, b->db[i][j]);
 			x += 3;
 		}
 		y++;
@@ -19,17 +19,17 @@ print_board(WINDOW *gw, Board *b)
 }
 
 void
-print_grid(WINDOW *gw, Board *b)
+print_grid(Board *b)
 {
 	int i, j;
-	wattroff(gw, A_BOLD);
+	wattroff(b->gw, A_BOLD);
 	for (i = 1; i <= b->rows; i++)
 	{
-		wmove(gw, i, 1);
+		wmove(b->gw, i, 1);
 		for (j = 0; j < b->cols; j++)
-			wprintw(gw, "[ ]");
+			wprintw(b->gw, "[ ]");
 	}
-	wrefresh(gw);
+	wrefresh(b->gw);
 }
 
 #define YMID(x) getmaxy(x)/2
@@ -135,10 +135,10 @@ parse_data(FILE *scorelog)
 }
 
 void
-game_won(WINDOW *gw)
+game_won(Board *b)
 {
-	wclear(gw);
-	wrefresh(gw);
+	wclear(b->gw);
+	wrefresh(b->gw);
 	attron(A_BOLD);
 	mvprintw(YMID(stdscr)-2, XMID(stdscr)-11, "You defused all the mines!");
 	mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, "You won :)");
@@ -148,10 +148,10 @@ game_won(WINDOW *gw)
 }
 
 void
-game_over(WINDOW *gw)
+game_over(Board *b)
 {
-	wclear(gw);
-	wrefresh(gw);
+	wclear(b->gw);
+	wrefresh(b->gw);
 	attron(A_BOLD);
 	mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, "You hit a mine! (or tried to defuse the wrong cell)");
 	mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, "Game over :(");

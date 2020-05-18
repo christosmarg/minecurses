@@ -16,12 +16,13 @@ typedef struct {
 	int nmines, ndefused;
 	int gameover;
 	int x, y;
+	WINDOW *gw;
 } Board;
 
 extern Board b;
 
 void reset		(Board *b);
-void init_game	(WINDOW *gw, Board *b);
+void init_game	(Board *b);
 void clear_board(Board *b);
 
 #endif /* MAIN_H */

@@ -23,15 +23,15 @@
 #define VOLUME_DOWN '-'
 #define QUIT 'q'
 
-void play			(struct _win_st* gw, Board *b);
-int open_cell		(struct _win_st* gw, Board *b);
-void handle_flags	(struct _win_st* gw, Board *b);
-void defuse_mine	(struct _win_st* gw, Board *b);
+void play			(Board *b);
+int open_cell		(Board *b);
+void handle_flags	(Board *b);
+void defuse_mine	(Board *b);
 void transfer		(Board *b);
-void reveal			(struct _win_st* gw, Board *b);
+void reveal			(Board *b);
 int is_defused		(Board *b);
-void handle_menu	(struct _win_st*, Board *b);
-void handle_gameover(struct _win_st* gw, Board *b);
-void handle_win		(struct _win_st* gw, Board *b);
+void handle_menu	(Board *b);
+void handle_gameover(Board *b);
+void handle_win		(Board *b);
 
 #endif /* GAMEPLAY_H */

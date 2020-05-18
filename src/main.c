@@ -12,17 +12,17 @@ main(int argc, char **argv)
 	init_curses();
 	Board b;
 	reset(&b);
-	WINDOW *gw = game_win(b.rows, b.cols);
-	init_game(gw, &b);
+	b.gw = game_win(b.rows, b.cols);
+	init_game(&b);
 
 	pthread_t audiothread;
 	long threadid = 1;
 	pthread_create(&audiothread, NULL, play_audio, (void *)threadid);
-	play(gw, &b);
+	play(&b);
 	
 	pthread_cancel(audiothread);
 	clear_board(&b);
-	delwin(gw);
+	delwin(b.gw);
 	endwin();
 
 	return 0;
@@ -44,10 +44,10 @@ reset(Board *b)
 }
 
 void
-init_game(WINDOW *gw, Board *b)
+init_game(Board *b)
 {
-	init_db(gw, b);
-	init_mb(gw, b);
+	init_db(b);
+	init_mb(b);
 }
 
 void
