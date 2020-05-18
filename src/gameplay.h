@@ -28,10 +28,10 @@ int open_cell		(Board *b);
 void handle_flags	(Board *b);
 void defuse_mine	(Board *b);
 void transfer		(Board *b);
-void reveal			(Board *b);
-int is_defused		(Board *b);
-void handle_menu	(Board *b);
-void handle_gameover(Board *b);
-void handle_win		(Board *b);
+void reveal			(const Board *b);
+int is_defused		(const Board *b);
+void handle_menu	(const Board *b);
+void handle_gameover(const Board *b);
+void handle_win		(const Board *b);
 
 #endif /* GAMEPLAY_H */

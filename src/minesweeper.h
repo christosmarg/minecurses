@@ -14,9 +14,9 @@ void fill_db	 (Board *b);
 void init_mb	 (Board *b);
 void place_mines (Board *b);
 void add_adj	 (Board *b);
-int is_mine		 (Board *b, int r, int c);
-int outof_bounds (Board *b, int r, int c);
-uint8_t adj_mines(Board *b, int r, int c);
+int is_mine		 (const Board *b, int r, int c);
+int outof_bounds (const Board *b, int r, int c);
+uint8_t adj_mines(const Board *b, int r, int c);
 void fill_spaces (Board *b);
 void die		 (void);
 

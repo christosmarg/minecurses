@@ -1,7 +1,7 @@
 #include "outputs.h"
 
 void
-print_board(Board *b)
+print_board(const Board *b)
 {    
 	int i, j, x, y = 1;
 	print_grid(b);
@@ -19,7 +19,7 @@ print_board(Board *b)
 }
 
 void
-print_grid(Board *b)
+print_grid(const Board *b)
 {
 	int i, j;
 	wattroff(b->gw, A_BOLD);
@@ -36,7 +36,7 @@ print_grid(Board *b)
 #define XMID(x) getmaxx(x)/2
 
 void
-session_info(Board *b)
+session_info(const Board *b)
 {
 	mvprintw(0, 0, "Current position: (%d, %d) ", b->x, b->y);
 	mvprintw(0, XMID(stdscr)-strlen("Defused mines: x/x")/2,
@@ -45,7 +45,7 @@ session_info(Board *b)
 }
 
 void
-session_write(Board *b, State state)
+session_write(const Board *b, State state)
 {
 	int i, j;
 	FILE *fsession = fopen(SESSION_PATH, "w");
@@ -74,7 +74,7 @@ session_write(Board *b, State state)
 }
 
 void
-score_write(Board *b)
+score_write(const Board *b)
 {
 	FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
 	char *playername = get_pname();
@@ -135,7 +135,7 @@ parse_data(FILE *scorelog)
 }
 
 void
-game_won(Board *b)
+game_won(const Board *b)
 {
 	wclear(b->gw);
 	wrefresh(b->gw);
@@ -148,7 +148,7 @@ game_won(Board *b)
 }
 
 void
-game_over(Board *b)
+game_over(const Board *b)
 {
 	wclear(b->gw);
 	wrefresh(b->gw);

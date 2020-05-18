@@ -105,7 +105,7 @@ transfer(Board *b)
 }
 
 void
-reveal(Board *b)
+reveal(const Board *b)
 {
 	int y = b->y + 1;
 	int x = 3 * b->x + 2;
@@ -114,13 +114,13 @@ reveal(Board *b)
 }
 
 int
-is_defused(Board *b)
+is_defused(const Board *b)
 {
 	return (b->db[Y][X] == DEFUSED) ? TRUE : FALSE;
 }
 
 void
-handle_menu(Board *b)
+handle_menu(const Board *b)
 {
 	options_menu();
 	box(b->gw, 0, 0);
@@ -128,7 +128,7 @@ handle_menu(Board *b)
 }
 
 void
-handle_gameover(Board *b)
+handle_gameover(const Board *b)
 {
 	game_over(b);
 	getchar();
@@ -141,7 +141,7 @@ handle_gameover(Board *b)
 }
 
 void
-handle_win(Board *b)
+handle_win(const Board *b)
 {
 	game_won(b);
 	getchar();

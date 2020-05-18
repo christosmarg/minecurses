@@ -62,19 +62,19 @@ add_adj(Board *b)
 }
 
 int
-is_mine(Board *b, int r, int c)
+is_mine(const Board *b, int r, int c)
 {
 	return (b->mb[r][c] == MINE) ? TRUE : FALSE;
 }
 
 int
-outof_bounds(Board *b, int r, int c)
+outof_bounds(const Board *b, int r, int c)
 {
 	return (r < 0 || r > b->rows-1 || c < 0 || c > b->cols-1) ? TRUE : FALSE;
 }
 
 uint8_t
-adj_mines(Board *b, int r, int c)
+adj_mines(const Board *b, int r, int c)
 {
 	uint8_t nadj = 0;
 

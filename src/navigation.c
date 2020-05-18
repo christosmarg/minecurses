@@ -12,7 +12,7 @@ navigate(Board *b, int *mv)
 }
 
 void
-getmv(Board *b, int *mv, int *y, int *x)
+getmv(const Board *b, int *mv, int *y, int *x)
 {
 	*mv = wgetch(b->gw);
 	switch (*mv)
@@ -65,7 +65,7 @@ mvright(int *x, int xmax)
 }
 
 void
-update_curs(Board *b, int y, int x)
+update_curs(const Board *b, int y, int x)
 {
 	wmove(b->gw, y, x);
 }
