@@ -8,8 +8,8 @@ SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
 CC = gcc
-CPPFLAGS += -Iinclude
-CFLAGS += -Wall 
+CPPFLAGS += -Iinclude -pedantic
+CFLAGS += -Wall -std=c99
 LDFLAGS += -Llib
 LDLIBS += -lm -lncurses -lSDL2 -lSDL2_mixer -pthread
 
