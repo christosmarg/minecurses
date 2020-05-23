@@ -130,7 +130,7 @@ handle_menu(const Board *b)
 void
 handle_gameover(const Board *b)
 {
-	game_over(b);
+	endscreen(b, GAME_LOST);
 	getchar();
 	erase();
 	refresh();
@@ -143,7 +143,7 @@ handle_gameover(const Board *b)
 void
 handle_win(const Board *b)
 {
-	game_won(b);
+	endscreen(b, GAME_WON);
 	getchar();
 	session_write(b, GAME_WON);
 	score_write(b);

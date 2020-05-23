@@ -13,6 +13,7 @@ play_audio(void *tid)
 	while (Mix_PlayingMusic()) ;
 	Mix_FreeMusic(music);
 	Mix_CloseAudio();
+	SDL_Quit();
 	return NULL;
 }
 

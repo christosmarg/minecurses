@@ -18,10 +18,6 @@ void session_info (const Board *b);
 void session_write(const Board *b, State state);
 void score_write  (const Board *b);
 char *get_pname	  (void);
-void sort_scorelog(FILE *scorelog);
-void show_scorelog(FILE *scorelog);
-void parse_data   (FILE *scorelog);
-void game_won	  (const Board *b);
-void game_over	  (const Board *b);
+void endscreen	  (const Board *b, State state);
 
 #endif /* OUTPUTS_H */

@@ -88,9 +88,7 @@ score_write(const Board *b)
 	{
 		fprintf(scorelog, "%s,%d,%dx%d\n",
 				playername, b->ndefused, b->cols, b->rows);
-		sort_scorelog(scorelog);
 		clrtoeol();
-		show_scorelog(scorelog);
 		mvprintw(0, 0, "New score written to score log");
 		refresh();
 		getchar();
@@ -117,44 +115,24 @@ get_pname(void)
 }
 
 void
-sort_scorelog(FILE *scorelog)
-{
-
-}
-
-void
-show_scorelog(FILE *scorelog)
-{
-
-}
-
-void
-parse_data(FILE *scorelog)
-{
-
-}
-
-void
-game_won(const Board *b)
+endscreen(const Board *b, State state)
 {
 	wclear(b->gw);
 	wrefresh(b->gw);
 	attron(A_BOLD);
-	mvprintw(YMID(stdscr)-2, XMID(stdscr)-11, "You defused all the mines!");
-	mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, "You won :)");
-	mvprintw(YMID(stdscr), XMID(stdscr)-11, "Press any key to continue");
-	refresh();
-	attroff(A_BOLD);
-}
-
-void
-game_over(const Board *b)
-{
-	wclear(b->gw);
-	wrefresh(b->gw);
-	attron(A_BOLD);
-	mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, "You hit a mine! (or tried to defuse the wrong cell)");
-	mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, "Game over :(");
+	switch (state)
+	{
+		case GAME_WON:
+			mvprintw(YMID(stdscr)-2, XMID(stdscr)-11,
+					"You defused all the mines!");
+			mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, "You won :)");
+			break;
+		case GAME_LOST:
+			mvprintw(YMID(stdscr)-2, XMID(stdscr)-24,
+					"You hit a mine! (or tried to defuse the wrong cell)");
+			mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, "Game over :(");
+			break;
+	}
 	mvprintw(YMID(stdscr), XMID(stdscr)-11, "Press any key to continue");
 	refresh();
 	attroff(A_BOLD);
