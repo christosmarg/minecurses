@@ -7,10 +7,10 @@ set_cols(void)
     do
     {
         mvprintw(YMAX(stdscr)-4, 1, "Columns (Min = 5, Max = %d): ",
-				(XMAX(stdscr)-2)/3-2);
-		refresh();
+                (XMAX(stdscr)-2)/3-2);
+        refresh();
         scanw("%d", &cols);
-		refresh();
+        refresh();
     } while (cols < 5 || cols > (XMAX(stdscr)-2)/3-2);
     return cols;    
 }
@@ -22,10 +22,10 @@ set_rows(void)
     do
     {
         mvprintw(YMAX(stdscr)-3, 1, "Rows (Min = 5, Max = %d): ",
-				YMAX(stdscr)-4);
-		refresh();
+                YMAX(stdscr)-4);
+        refresh();
         scanw("%d", &rows);
-		refresh();
+        refresh();
     } while (rows < 5 || rows > YMAX(stdscr)-4); 
     return rows;
 }

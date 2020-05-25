@@ -27,7 +27,6 @@ Additional controls
 ## To Do
 
 * Add more error checks
-* Load score log to ui
 * Add colors
 * Add UTF-8 support
 * Fix wrong mine spawning bug
@@ -44,7 +43,7 @@ Additional controls
 * `SDL2_mixer`
 
 ```shell
-$ cd path_to/minecurses
+$ cd path/to/minecurses
 $ make
 $ make run
 $ make clean # optional
