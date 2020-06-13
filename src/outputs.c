@@ -8,12 +8,8 @@ print_board(const Board *b)
     wattron(b->gw, A_BOLD);
     for (i = 0; i < b->rows; i++)
     {
-        x = 2; 
-        for (j = 0; j < b->cols; j++)
-        {
+        for (j = 0, x = 2; j < b->cols; j++, x += 3)
             mvwaddch(b->gw, y, x, b->db[i][j]);
-            x += 3;
-        }
         y++;
     }
 }
@@ -32,9 +28,6 @@ print_grid(const Board *b)
     wrefresh(b->gw);
 }
 
-#define YMID(x) getmaxy(x)/2
-#define XMID(x) getmaxx(x)/2
-
 void
 session_info(const Board *b)
 {
@@ -49,12 +42,7 @@ session_write(const Board *b, State state)
 {
     int i, j;
     FILE *fsession = fopen(SESSION_PATH, "w");
-    if (fsession == NULL)
-    {
-        mvprintw(0, 0, "Error opening file, exiting...");
-        refresh();
-        exit(EXIT_FAILURE);
-    }
+    if (fsession == NULL) die();
     else
     {
         state == GAME_WON
@@ -78,12 +66,7 @@ score_write(const Board *b)
 {
     FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
     char *playername = get_pname();
-    if (scorelog == NULL)
-    {
-        mvprintw(0, 0, "Error opening file, exiting...");
-        refresh();
-        exit(EXIT_FAILURE);
-    }
+    if (scorelog == NULL) die();
     else
     {
         fprintf(scorelog, "%s,%d,%dx%d\n",
@@ -137,6 +120,3 @@ endscreen(const Board *b, State state)
     refresh();
     attroff(A_BOLD);
 }
-
-#undef YMID
-#undef XMID

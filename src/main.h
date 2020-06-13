@@ -6,8 +6,12 @@
 #endif /* defined linux || defined __unix__ || defined __APPLE__ */
 #include <stdlib.h>
 
-#define YMAX(x) getmaxy(x)
-#define XMAX(x) getmaxx(x)
+#define YMAX(x)        (getmaxy(x))
+#define XMAX(x)        (getmaxx(x))
+#define GRIDSPACE_X(x) (x * 3 + 2)
+#define GRIDSPACE_Y(y) (y + 2)
+#define ARRSPACE_X(x)  ((x - 2) / 3)
+#define ARRSPACE_Y(y)  (y - 1)
 
 typedef struct {
     char **db;
@@ -21,8 +25,9 @@ typedef struct {
 
 extern Board b;
 
-void reset      (Board *b);
-void init_game  (Board *b);
-void clear_board(Board *b);
+void reset        (Board *b);
+void init_game    (Board *b);
+void dealloc_board(Board *b);
+void die          (void);
 
 #endif /* MAIN_H */

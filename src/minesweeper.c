@@ -99,11 +99,3 @@ fill_spaces(Board *b)
             if (b->mb[i][j] != MINE && b->mb[i][j] == '0')
                 b->mb[i][j] = '-';
 }
-
-void
-die(void)
-{
-    mvprintw(0, 0, "Error, cannot allocate memory, exiting...");
-    refresh();
-    exit(EXIT_FAILURE);
-}

@@ -31,6 +31,7 @@ Additional controls
 * Add UTF-8 support
 * Fix wrong mine spawning bug
 * Fix flickering and cursor
+* Load score log to TUI
 
 ## Execution
 

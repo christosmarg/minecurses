@@ -1,11 +1,14 @@
 #ifndef OUTPUTS_H
 #define OUTPUTS_H
 
-#include "main.h"
 #include <string.h>
+#include "main.h"
 
-#define SESSION_PATH "log/session.txt"
+#define SESSION_PATH   "log/session.txt"
 #define SCORE_LOG_PATH "log/scorelog.csv"
+
+#define YMID(x) getmaxy(x)/2
+#define XMID(x) getmaxx(x)/2
 
 typedef enum {
     GAME_WON,

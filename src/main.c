@@ -25,7 +25,7 @@ main(int argc, char **argv)
     play(&b);
     
     pthread_cancel(audiothread);
-    clear_board(&b);
+    dealloc_board(&b);
     delwin(b.gw);
     endwin();
     return EXIT_SUCCESS;
@@ -54,7 +54,7 @@ init_game(Board *b)
 }
 
 void
-clear_board(Board *b)
+dealloc_board(Board *b)
 {
     int i;
     for (i = 0; i < b->rows; i++)
@@ -65,3 +65,12 @@ clear_board(Board *b)
     free(b->db);
     free(b->mb);
 }
+
+void
+die(void)
+{
+    mvprintw(0, 0, "Error, cannot allocate memory, exiting...");
+    refresh();
+    exit(EXIT_FAILURE);
+}
+

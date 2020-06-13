@@ -5,8 +5,8 @@ navigate(Board *b, int *mv)
 {
     static int y = 1, x = 2;
     update_curs(b, y, x);
-    b->x = (x-2)/3;
-    b->y = y-1;
+    b->x = ARRSPACE_X(x);
+    b->y = ARRSPACE_Y(y);
     refresh();
     getmv(b, mv, &y, &x);
 }

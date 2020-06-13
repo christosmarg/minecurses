@@ -11,10 +11,10 @@ init_curses(void)
 WINDOW *
 game_win(int rows, int cols)
 {
-    int wrows = rows+2;
-    int wcols = cols*3+2;
-    int wy = YMAX(stdscr)/2 - wrows/2;
-    int wx = XMAX(stdscr)/2 - wcols/2;
+    int wrows  = GRIDSPACE_Y(rows);
+    int wcols  = GRIDSPACE_X(cols);
+    int wy     = CENTER(YMAX(stdscr), wrows);
+    int wx     = CENTER(XMAX(stdscr), wcols);
     WINDOW *gw = newwin(wrows, wcols, wy, wx);
     wattron(gw, A_BOLD);
     box(gw, 0, 0);
@@ -26,9 +26,9 @@ game_win(int rows, int cols)
 void
 options_menu(void)
 {
-    int w = 33, h = 15;
-    int wy = YMAX(stdscr)/2 - h/2;
-    int wx = XMAX(stdscr)/2 - w/2;
+    int w  = 33, h = 15;
+    int wy = CENTER(YMAX(stdscr), h);
+    int wx = CENTER(XMAX(stdscr), w);
     WINDOW *opts = newwin(h, w, wy, wx);
     werase(opts);
     box(opts, 0, 0);

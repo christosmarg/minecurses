@@ -1,13 +1,11 @@
 #ifndef MINESWEEPER_H
 #define MINESWEEPER_H
 
-#include <stdlib.h>
-#include <string.h>
 #include <time.h>
 #include "wins.h"
 
 #define BLANK ' '
-#define MINE '*'
+#define MINE  '*'
 
 void init_db     (Board *b);
 void fill_db     (Board *b);

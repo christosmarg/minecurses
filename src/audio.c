@@ -10,7 +10,7 @@ play_audio(void *tid)
     music = Mix_LoadMUS(AUDIO_PATH);
 
     Mix_PlayMusic(music, -1);
-    while (Mix_PlayingMusic()) ;
+    while (Mix_PlayingMusic());
     Mix_FreeMusic(music);
     Mix_CloseAudio();
     SDL_Quit();
@@ -21,16 +21,15 @@ void
 volume(char option)
 {
     static int volume = MIX_MAX_VOLUME;
-
     switch (option)
     {
         case '+':
             if (volume == MIX_MAX_VOLUME) break;
-            else Mix_VolumeMusic(volume += 10);
+            else Mix_VolumeMusic(volume += VOL_STEP);
             break;
         case '-':
             if (volume == 0) break;
-            else Mix_VolumeMusic(volume -= 10);
+            else Mix_VolumeMusic(volume -= VOL_STEP);
             break;
     }
 }

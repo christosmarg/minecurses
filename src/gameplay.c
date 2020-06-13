@@ -21,6 +21,7 @@ play(Board *b)
         print_board(b);
         session_info(b);
         navigate(b, &move);
+
         switch (move)
         {
             case ENTER:         /* FALLTHROUGH */
@@ -53,7 +54,7 @@ play(Board *b)
                 handle_menu(b);
                 break;
             case 'r':
-                clear_board(b);
+                dealloc_board(b);
                 reset(b);
                 init_game(b);
                 break;
@@ -64,10 +65,8 @@ play(Board *b)
             b->ndefused < b->nmines && !b->gameover &&
             move != QUIT);  
 
-    if (b->gameover)
-        handle_gameover(b);
-    if (b->ndefused == b->nmines)
-        handle_win(b);
+    if (b->gameover) handle_gameover(b);
+    if (b->ndefused == b->nmines) handle_win(b);
 }
 
 int
@@ -108,7 +107,7 @@ void
 reveal(const Board *b)
 {
     int y = b->y + 1;
-    int x = 3 * b->x + 2;
+    int x = GRIDSPACE_X(b->x);
     mvwaddch(b->gw, y, x, b->db[Y][X]);
     wrefresh(b->gw);
 }
