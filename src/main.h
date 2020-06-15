@@ -25,9 +25,9 @@ typedef struct {
 
 extern Board b;
 
-void reset        (Board *b);
-void init_game    (Board *b);
-void dealloc_board(Board *b);
-void die          (void);
+void  reset(Board *b);
+void  game_init(Board *b);
+void  dealloc_board(Board *b);
+void  die(void);
 
 #endif /* MAIN_H */

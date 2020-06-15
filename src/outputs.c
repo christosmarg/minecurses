@@ -1,10 +1,10 @@
 #include "outputs.h"
 
 void
-print_board(const Board *b)
+board_print(const Board *b)
 {    
     int i, j, x, y = 1;
-    print_grid(b);
+    grid_print(b);
     wattron(b->gw, A_BOLD);
     for (i = 0; i < b->rows; i++)
     {
@@ -15,7 +15,7 @@ print_board(const Board *b)
 }
 
 void
-print_grid(const Board *b)
+grid_print(const Board *b)
 {
     int i, j;
     wattroff(b->gw, A_BOLD);
@@ -65,7 +65,7 @@ void
 score_write(const Board *b)
 {
     FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
-    char *playername = get_pname();
+    char *playername = playername_get();
     if (scorelog == NULL) die();
     else
     {
@@ -81,9 +81,9 @@ score_write(const Board *b)
 }
 
 char *
-get_pname(void)
+playername_get(void)
 {   
-    char buffer[20];
+    char buffer[48];
     char *playername;
     move(0, 0);
     echo();

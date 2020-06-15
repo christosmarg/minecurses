@@ -3,8 +3,8 @@
 
 #include "minesweeper.h"
 
-int set_cols  (void);
-int set_rows  (void);
-int set_nmines(int dimensions);
+int  cols_set(void);
+int  rows_set(void);
+int  nmines_set(int dimensions);
 
 #endif /* SETTINGS_H */

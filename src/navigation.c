@@ -4,7 +4,7 @@ void
 navigate(Board *b, int *mv)
 {
     static int y = 1, x = 2;
-    update_curs(b, y, x);
+    curs_update(b, y, x);
     b->x = ARRSPACE_X(x);
     b->y = ARRSPACE_Y(y);
     refresh();
@@ -65,7 +65,7 @@ mvright(int *x, int xmax)
 }
 
 void
-update_curs(const Board *b, int y, int x)
+curs_update(const Board *b, int y, int x)
 {
     wmove(b->gw, y, x);
 }

@@ -7,8 +7,8 @@
 #define AUDIO_PATH "res/detective-8bit.wav"
 #define VOL_STEP 10
 
-void *play_audio(void *tid);
-void volume     (char option);
-void pause_audio(void);
+void *audio_play(void *tid);
+void  volume(char option);
+void  audio_pause(void);
 
 #endif /* AUDIO_H */

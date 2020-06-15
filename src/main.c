@@ -13,16 +13,16 @@ main(int argc, char **argv)
     fprintf(stderr, "ncurses is needed in order to run this program.\n");
     return EXIT_FAILURE;
 #endif /* NCURSES_VERSION */
-    init_curses();
+    curses_init();
     Board b;
     reset(&b);
-    b.gw = game_win(b.rows, b.cols);
-    init_game(&b);
+    b.gw = game_win_init(b.rows, b.cols);
+    game_init(&b);
 
     pthread_t audiothread;
     long tid = 1;
-    pthread_create(&audiothread, NULL, play_audio, (void *)tid);
-    play(&b);
+    pthread_create(&audiothread, NULL, audio_play, (void *)tid);
+    minesweeper_play(&b);
     
     pthread_cancel(audiothread);
     dealloc_board(&b);
@@ -35,22 +35,22 @@ void
 reset(Board *b)
 {
     echo();
-    b->cols     = set_cols();
-    b->rows     = set_rows();
-    b->nmines   = set_nmines(b->rows * b->cols);
+    b->cols     = cols_set();
+    b->rows     = rows_set();
+    b->nmines   = nmines_set(b->rows * b->cols);
     b->ndefused = b->x = b->y = 0;
     b->gameover = FALSE;
     noecho();
-    options_menu();
+    menu_options();
     erase();
     refresh();
 }
 
 void
-init_game(Board *b)
+game_init(Board *b)
 {
-    init_db(b);
-    init_mb(b);
+    db_init(b);
+    mb_init(b);
 }
 
 void
@@ -73,4 +73,3 @@ die(void)
     refresh();
     exit(EXIT_FAILURE);
 }
-

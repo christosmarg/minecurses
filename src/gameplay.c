@@ -5,7 +5,7 @@
 #define Y b->y
 
 void
-play(Board *b)
+minesweeper_play(Board *b)
 {
     b->x = b->y = 0;
     b->gameover = FALSE;
@@ -17,8 +17,8 @@ play(Board *b)
         erase();
         delwin(b->gw);
         refresh();
-        b->gw = game_win(b->rows, b->cols);
-        print_board(b);
+        b->gw = game_win_init(b->rows, b->cols);
+        board_print(b);
         session_info(b);
         navigate(b, &move);
 
@@ -44,7 +44,7 @@ play(Board *b)
                     b->gameover = TRUE;              
                 break;
             case PAUSE_AUDIO:
-                pause_audio();
+                audio_pause();
                 break;
             case VOLUME_UP:     /* FALLTHROUGH */
             case VOLUME_DOWN:
@@ -56,7 +56,7 @@ play(Board *b)
             case 'r':
                 dealloc_board(b);
                 reset(b);
-                init_game(b);
+                game_init(b);
                 break;
             default: break;
         }
@@ -121,9 +121,9 @@ is_defused(const Board *b)
 void
 handle_menu(const Board *b)
 {
-    options_menu();
+    menu_options();
     box(b->gw, 0, 0);
-    print_board(b);
+    board_print(b);
 }
 
 void
@@ -134,7 +134,7 @@ handle_gameover(const Board *b)
     erase();
     refresh();
     box(b->gw, 0, 0);
-    print_board(b);
+    board_print(b);
     wrefresh(b->gw);
     session_write(b, GAME_LOST);
 }

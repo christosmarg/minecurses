@@ -23,15 +23,15 @@
 #define VOLUME_DOWN  '-'
 #define QUIT         'q'
 
-void play           (Board *b);
-int open_cell       (Board *b);
-void handle_flags   (Board *b);
-void defuse_mine    (Board *b);
-void transfer       (Board *b);
-void reveal         (const Board *b);
-int is_defused      (const Board *b);
-void handle_menu    (const Board *b);
-void handle_gameover(const Board *b);
-void handle_win     (const Board *b);
+void  minesweeper_play(Board *b);
+int   open_cell(Board *b);
+void  handle_flags(Board *b);
+void  defuse_mine(Board *b);
+void  transfer(Board *b);
+void  reveal(const Board *b);
+int   is_defused(const Board *b);
+void  handle_menu(const Board *b);
+void  handle_gameover(const Board *b);
+void  handle_win(const Board *b);
 
 #endif /* GAMEPLAY_H */

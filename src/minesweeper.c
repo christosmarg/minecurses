@@ -1,19 +1,18 @@
 #include "minesweeper.h"
 
 void
-init_db(Board *b)
+db_init(Board *b)
 {
     int i;
     b->db = (char **)malloc(b->rows * sizeof(char *));
     for (i = 0; i < b->rows; i++)
         b->db[i] = (char *)malloc(b->cols);
-
-    if (b->mb == NULL) die();
-    else fill_db(b);
+    if (b->db == NULL) die();
+    else db_fill(b);
 }
 
 void
-fill_db(Board *b)
+db_fill(Board *b)
 {
     int i, j;
     for (i = 0; i < b->rows; i++)
@@ -22,7 +21,7 @@ fill_db(Board *b)
 }
 
 void
-init_mb(Board *b)
+mb_init(Board *b)
 {
     int i;
     b->mb = (char **)malloc(b->rows * sizeof(char *));
@@ -32,14 +31,14 @@ init_mb(Board *b)
     if (b->mb == NULL) die();
     else
     {
-        place_mines(b);
+        mines_place(b);
         add_adj(b);
-        fill_spaces(b);
+        spaces_fill(b);
     }
 }
 
 void
-place_mines(Board *b)
+mines_place(Board *b)
 {
     int i, r, c;
     srand(time(NULL));
@@ -91,7 +90,7 @@ adj_mines(const Board *b, int r, int c)
 }
 
 void
-fill_spaces(Board *b)
+spaces_fill(Board *b)
 {
     int i, j;
     for (i = 0; i < b->rows; i++)

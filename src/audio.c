@@ -1,7 +1,7 @@
 #include "audio.h"
 
 void *
-play_audio(void *tid)
+audio_play(void *tid)
 {
     /*int tid = (long)threadid;*/
     Mix_Music *music = NULL;
@@ -35,7 +35,7 @@ volume(char option)
 }
 
 void
-pause_audio(void)
+audio_pause(void)
 {
     (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();
 }
