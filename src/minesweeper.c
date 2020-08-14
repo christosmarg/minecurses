@@ -1,18 +1,18 @@
 #include "minesweeper.h"
 
 void
-db_init(Board *b)
+displayboard_init(Board *b)
 {
     int i;
     b->db = (char **)malloc(b->rows * sizeof(char *));
     for (i = 0; i < b->rows; i++)
         b->db[i] = (char *)malloc(b->cols);
     if (b->db == NULL) die();
-    else db_fill(b);
+    else displayboard_fill(b);
 }
 
 void
-db_fill(Board *b)
+displayboard_fill(Board *b)
 {
     int i, j;
     for (i = 0; i < b->rows; i++)
@@ -21,7 +21,7 @@ db_fill(Board *b)
 }
 
 void
-mb_init(Board *b)
+mineboard_init(Board *b)
 {
     int i;
     b->mb = (char **)malloc(b->rows * sizeof(char *));
@@ -77,14 +77,14 @@ adj_mines(const Board *b, int r, int c)
 {
     uint8_t nadj = 0;
 
-    if (!outof_bounds(b, r, c-1)    && b->mb[r][c-1]    == MINE) nadj++; // North
-    if (!outof_bounds(b, r, c+1)    && b->mb[r][c+1]    == MINE) nadj++; // South
-    if (!outof_bounds(b, r+1, c)    && b->mb[r+1][c]    == MINE) nadj++; // East
-    if (!outof_bounds(b, r-1, c)    && b->mb[r-1][c]    == MINE) nadj++; // West
-    if (!outof_bounds(b, r+1, c-1)  && b->mb[r+1][c-1]  == MINE) nadj++; // North-East
-    if (!outof_bounds(b, r-1, c-1)  && b->mb[r-1][c-1]  == MINE) nadj++; // North-West
-    if (!outof_bounds(b, r+1, c+1)  && b->mb[r+1][c+1]  == MINE) nadj++; // South-East
-    if (!outof_bounds(b, r-1, c+1)  && b->mb[r-1][c+1]  == MINE) nadj++; // South-West
+    if (!outof_bounds(b, r, c-1)   && b->mb[r][c-1]   == MINE) nadj++; // North
+    if (!outof_bounds(b, r, c+1)   && b->mb[r][c+1]   == MINE) nadj++; // South
+    if (!outof_bounds(b, r+1, c)   && b->mb[r+1][c]   == MINE) nadj++; // East
+    if (!outof_bounds(b, r-1, c)   && b->mb[r-1][c]   == MINE) nadj++; // West
+    if (!outof_bounds(b, r+1, c-1) && b->mb[r+1][c-1] == MINE) nadj++; // North-East
+    if (!outof_bounds(b, r-1, c-1) && b->mb[r-1][c-1] == MINE) nadj++; // North-West
+    if (!outof_bounds(b, r+1, c+1) && b->mb[r+1][c+1] == MINE) nadj++; // South-East
+    if (!outof_bounds(b, r-1, c+1) && b->mb[r-1][c+1] == MINE) nadj++; // South-West
 
     return nadj;
 }

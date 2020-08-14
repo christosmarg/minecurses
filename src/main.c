@@ -49,8 +49,8 @@ reset(Board *b)
 void
 game_init(Board *b)
 {
-    db_init(b);
-    mb_init(b);
+    displayboard_init(b);
+    mineboard_init(b);
 }
 
 void

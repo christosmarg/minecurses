@@ -7,15 +7,15 @@
 #define BLANK ' '
 #define MINE  '*'
 
-void    db_init(Board *b);
-void    db_fill(Board *b);
-void    mb_init(Board *b);
-void    mines_place(Board *b);
-void    add_adj(Board *b);
-int     is_mine(const Board *b, int r, int c);
-int     outof_bounds(const Board *b, int r, int c);
-uint8_t adj_mines(const Board *b, int r, int c);
-void    spaces_fill(Board *b);
-void    die(void);
+extern void    displayboard_init(Board *b);
+extern void    displayboard_fill(Board *b);
+extern void    mineboard_init(Board *b);
+extern void    mines_place(Board *b);
+extern void    add_adj(Board *b);
+extern int     is_mine(const Board *b, int r, int c);
+extern int     outof_bounds(const Board *b, int r, int c);
+extern uint8_t adj_mines(const Board *b, int r, int c);
+extern void    spaces_fill(Board *b);
+extern void    die(void);
 
 #endif /* MINESWEEPER_H */

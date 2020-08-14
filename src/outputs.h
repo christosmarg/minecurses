@@ -15,12 +15,12 @@ typedef enum {
     GAME_LOST
 } State;
 
-void  board_print(const Board *b);
-void  grid_print(const Board *b);
-void  session_info(const Board *b);
-void  session_write(const Board *b, State state);
-void  score_write(const Board *b);
-char *playername_get(void);
-void  endscreen(const Board *b, State state);
+extern void  board_print(const Board *b);
+extern void  grid_print(const Board *b);
+extern void  session_info(const Board *b);
+extern void  session_write(const Board *b, State state);
+extern void  score_write(const Board *b);
+extern char *playername_get(void);
+extern void  endscreen(const Board *b, State state);
 
 #endif /* OUTPUTS_H */
