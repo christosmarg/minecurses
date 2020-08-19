@@ -18,7 +18,7 @@ audio_play(void *tid)
 }
 
 void
-volume(char option)
+audio_change_volume(char option)
 {
     static int volume = MIX_MAX_VOLUME;
     switch (option)

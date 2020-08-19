@@ -1,15 +1,7 @@
 #include "wins.h"
 
-void
-curses_init(void)
-{
-    initscr();
-    noecho();
-    cbreak();
-}
-
 WINDOW *
-game_win_init(int rows, int cols)
+wins_gamewin_init(int rows, int cols)
 {
     int wrows  = GRIDSPACE_Y(rows);
     int wcols  = GRIDSPACE_X(cols);
@@ -24,7 +16,7 @@ game_win_init(int rows, int cols)
 }
 
 void
-menu_options(void)
+wins_menu_options(void)
 {
     int w  = 33, h = 15;
     int wy = CENTER(YMAX(stdscr), h);
@@ -32,7 +24,7 @@ menu_options(void)
     WINDOW *opts = newwin(h, w, wy, wx);
     werase(opts);
     box(opts, 0, 0);
-    menu_fill(opts);
+    wins_menu_fill(opts);
     wrefresh(opts);
     wgetch(opts);
     werase(opts);
@@ -41,7 +33,7 @@ menu_options(void)
 }
 
 void
-menu_fill(WINDOW *opts)
+wins_menu_fill(WINDOW *opts)
 {
     mvwprintw(opts, 1, 1, "q    Quit");
     mvwprintw(opts, 2, 1, "w/k  Move up");

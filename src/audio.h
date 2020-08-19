@@ -8,7 +8,7 @@
 #define VOL_STEP 10
 
 extern void *audio_play(void *tid);
-extern void  volume(char option);
+extern void  audio_change_volume(char option);
 extern void  audio_pause(void);
 
 #endif /* AUDIO_H */

@@ -1,37 +1,43 @@
 #ifndef GAMEPLAY_H
 #define GAMEPLAY_H
 
+#include <ctype.h>
 #include "audio.h"
-#include "main.h"
-#include "navigation.h"
-#include "outputs.h"
-#include "wins.h"
+#include "util.h"
 
-#define BLANK        ' '
-#define MINE         '*'
-#define ENTER        '\n'
-#define OPEN_LOWER   'o'
-#define OPEN_UPPER   'O'
-#define FLAG         'F'
-#define FLAG_LOWER   'f'
-#define FLAG_UPPER   'F'
-#define DEFUSE_LOWER 'g'
-#define DEFUSE_UPPER 'G'
-#define DEFUSED      'D'
-#define PAUSE_AUDIO  'p'
-#define VOLUME_UP    '+'
-#define VOLUME_DOWN  '-'
-#define QUIT         'q'
+#define MOVE_ENTER        '\n'
+#define MOVE_OPEN_CELL    'o'
+#define MOVE_FLAG_CELL    'f'
+#define MOVE_DEFUSE_CELL  'g'
+#define MOVE_PAUSE_AUDIO  'p'
+#define MOVE_VOLUME_UP    '+'
+#define MOVE_VOLUME_DOWN  '-'
+#define MOVE_OPEN_MENU    'm'
+#define MOVE_RESTART      'r'
+#define MOVE_QUIT         'q'
+#define MINE_DEFUSED      'd'
+#define CELL_FLAGGED      'F'
 
-extern void  minesweeper_play(Board *b);
-extern int   open_cell(Board *b);
-extern void  handle_flags(Board *b);
-extern void  defuse_mine(Board *b);
-extern void  transfer(Board *b);
-extern void  reveal(const Board *b);
-extern int   is_defused(const Board *b);
-extern void  handle_menu(const Board *b);
-extern void  handle_gameover(const Board *b);
-extern void  handle_win(const Board *b);
+extern void  gmpl_start(Minecurses *m);
+extern void  gmpl_board_print(const Minecurses *m);
+extern void  gmpl_grid_print(const Minecurses *m);
+extern int   gmpl_open_cell(Minecurses *m);
+extern void  gmpl_handle_flags(Minecurses *m);
+extern void  gmpl_defuse_mine(Minecurses *m);
+extern void  gmpl_transfer(Minecurses *m);
+extern void  gmpl_reveal(const Minecurses *m);
+extern int   gmpl_is_defused(const Minecurses *m);
+extern void  gmpl_handle_menu(const Minecurses *m);
+extern void  gmpl_handle_gameover(const Minecurses *m);
+extern void  gmpl_handle_win(const Minecurses *m);
+extern void  gmpl_navigate(Minecurses *m, int *mv);
+extern void  gmpl_getmv(const Minecurses *m, int *mv, int *y, int *x);
+extern void  gmpl_mvup(int *y);
+extern void  gmpl_mvdown(int *y, int xmax);
+extern void  gmpl_mvleft(int *x);
+extern void  gmpl_mvright(int *x, int xmax);
+extern void  gmpl_curs_update(const Minecurses *m, int y, int x);
+extern void  gmpl_session_info(const Minecurses *m);
+extern void  gmpl_endscreen(const Minecurses *m, State state);
 
 #endif /* GAMEPLAY_H */

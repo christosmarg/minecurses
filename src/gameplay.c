@@ -1,152 +1,279 @@
 #include "gameplay.h"
-#include "main.h"
 
-#define X b->x
-#define Y b->y
+#define bx m->x
+#define by m->y
 
 void
-minesweeper_play(Board *b)
+gmpl_start(Minecurses *m)
 {
-    b->x = b->y = 0;
-    b->gameover = FALSE;
-    b->ndefused = 0;
+    m->x = m->y = 0;
+    m->gameover = FALSE;
+    m->numdefused = 0;
     int move;
 
     do
     {
         erase();
-        delwin(b->gw);
+        delwin(m->gamewin);
         refresh();
-        b->gw = game_win_init(b->rows, b->cols);
-        board_print(b);
-        session_info(b);
-        navigate(b, &move);
+        m->gamewin = wins_gamewin_init(m->rows, m->cols);
+        gmpl_board_print(m);
+        gmpl_session_info(m);
+        gmpl_navigate(m, &move);
 
-        switch (move)
+        switch (tolower((char)move))
         {
-            case ENTER:         /* FALLTHROUGH */
-            case OPEN_LOWER:
-            case OPEN_UPPER:
-                b->gameover = open_cell(b);
+            case MOVE_ENTER:         /* FALLTHROUGH */
+            case MOVE_OPEN_CELL:
+                m->gameover = gmpl_open_cell(m);
                 break;
-            case FLAG_LOWER:    /* FALLTHROUGH */
-            case FLAG_UPPER:
-                handle_flags(b);
+            case MOVE_FLAG_CELL:
+                gmpl_handle_flags(m);
                 break;
-            case DEFUSE_LOWER:  /* FALLTHROUGH */
-            case DEFUSE_UPPER:
-                if (b->db[Y][X] == FLAG && b->mb[Y][X] == MINE)
+            case MOVE_DEFUSE_CELL:
+                if (m->dispboard[by][bx] == CELL_FLAGGED && m->mineboard[by][bx] == MINE)
                 {
-                    b->ndefused++;
-                    defuse_mine(b);
+                    m->numdefused++;
+                    gmpl_defuse_mine(m);
                 }
-                else if (b->db[Y][X] == FLAG && b->mb[Y][X] != MINE)
-                    b->gameover = TRUE;              
+                else if (m->dispboard[by][bx] == CELL_FLAGGED && m->mineboard[by][bx] != MINE)
+                    m->gameover = TRUE;              
                 break;
-            case PAUSE_AUDIO:
+            case MOVE_PAUSE_AUDIO:
                 audio_pause();
                 break;
-            case VOLUME_UP:     /* FALLTHROUGH */
-            case VOLUME_DOWN:
-                volume(move);
+            case MOVE_VOLUME_UP:     /* FALLTHROUGH */
+            case MOVE_VOLUME_DOWN:
+                audio_change_volume(move);
                 break;
-            case 'm':
-                handle_menu(b);
+            case MOVE_OPEN_MENU:
+                gmpl_handle_menu(m);
                 break;
-            case 'r':
-                dealloc_board(b);
-                reset(b);
-                game_init(b);
+            case MOVE_RESTART:
+                util_dealloc_boards(m);
+                util_reset(m);
+                util_game_init(m);
                 break;
             default: break;
         }
-    } while (((Y >= 0 && Y < b->rows) &&
-            (X >= 0 && X < b->cols))  &&
-            b->ndefused < b->nmines && !b->gameover &&
-            move != QUIT);  
+    } while (((by >= 0 && by < m->rows) &&
+            (bx >= 0 && bx < m->cols))  &&
+            m->numdefused < m->nummines && !m->gameover &&
+            tolower((char)move) != MOVE_QUIT);  
 
-    if (b->gameover) handle_gameover(b);
-    if (b->ndefused == b->nmines) handle_win(b);
+    if (m->gameover) gmpl_handle_gameover(m);
+    if (m->numdefused == m->nummines) gmpl_handle_win(m);
+}
+
+void
+gmpl_board_print(const Minecurses *m)
+{    
+    int i, j, x, y = 1;
+    gmpl_grid_print(m);
+    wattron(m->gamewin, A_BOLD);
+    for (i = 0; i < m->rows; i++)
+    {
+        for (j = 0, x = 2; j < m->cols; j++, x += 3)
+            mvwaddch(m->gamewin, y, x, m->dispboard[i][j]);
+        y++;
+    }
+}
+
+void
+gmpl_grid_print(const Minecurses *m)
+{
+    int i, j;
+    wattroff(m->gamewin, A_BOLD);
+    for (i = 1; i <= m->rows; i++)
+    {
+        wmove(m->gamewin, i, 1);
+        for (j = 0; j < m->cols; j++)
+            wprintw(m->gamewin, "[ ]");
+    }
+    wrefresh(m->gamewin);
 }
 
 int
-open_cell(Board *b)
+gmpl_open_cell(Minecurses *m)
 {
-    transfer(b);
-    reveal(b);
-    return (b->db[Y][X] == MINE) ? TRUE : FALSE;
+    gmpl_transfer(m);
+    gmpl_reveal(m);
+    return (m->dispboard[by][bx] == MINE) ? TRUE : FALSE;
 }
 
 void
-handle_flags(Board *b)
+gmpl_handle_flags(Minecurses *m)
 {
-    if (b->db[Y][X] == FLAG)
-        b->db[Y][X] = BLANK;
-    else if (b->db[Y][X] != FLAG &&
-             b->db[Y][X] != BLANK)
+    if (m->dispboard[by][bx] == CELL_FLAGGED)
+        m->dispboard[by][bx] = BLANK;
+    else if (m->dispboard[by][bx] != CELL_FLAGGED &&
+             m->dispboard[by][bx] != BLANK)
         return;
-    else b->db[Y][X] = FLAG;
-    reveal(b);
+    else m->dispboard[by][bx] = CELL_FLAGGED;
+    gmpl_reveal(m);
 }
 
 void
-defuse_mine(Board *b)
+gmpl_defuse_mine(Minecurses *m)
 {
     refresh();
-    b->db[Y][X] = b->mb[Y][X] = DEFUSED;
-    reveal(b);
+    m->dispboard[by][bx] = m->mineboard[by][bx] = MINE_DEFUSED;
+    gmpl_reveal(m);
 }
 
 void
-transfer(Board *b)
+gmpl_transfer(Minecurses *m)
 {
-    b->db[Y][X] = b->mb[Y][X];
+    m->dispboard[by][bx] = m->mineboard[by][bx];
 }
 
 void
-reveal(const Board *b)
+gmpl_reveal(const Minecurses *m)
 {
-    int y = b->y + 1;
-    int x = GRIDSPACE_X(b->x);
-    mvwaddch(b->gw, y, x, b->db[Y][X]);
-    wrefresh(b->gw);
+    int y = m->y + 1;
+    int x = GRIDSPACE_X(m->x);
+    mvwaddch(m->gamewin, y, x, m->dispboard[by][bx]);
+    wrefresh(m->gamewin);
 }
 
 int
-is_defused(const Board *b)
+gmpl_is_defused(const Minecurses *m)
 {
-    return (b->db[Y][X] == DEFUSED) ? TRUE : FALSE;
+    return (m->dispboard[by][bx] == MINE_DEFUSED) ? TRUE : FALSE;
 }
 
 void
-handle_menu(const Board *b)
+gmpl_handle_menu(const Minecurses *m)
 {
-    menu_options();
-    box(b->gw, 0, 0);
-    board_print(b);
+    wins_menu_options();
+    box(m->gamewin, 0, 0);
+    gmpl_board_print(m);
 }
 
 void
-handle_gameover(const Board *b)
+gmpl_handle_gameover(const Minecurses *m)
 {
-    endscreen(b, GAME_LOST);
+    gmpl_endscreen(m, GAME_LOST);
     getchar();
     erase();
     refresh();
-    box(b->gw, 0, 0);
-    board_print(b);
-    wrefresh(b->gw);
-    session_write(b, GAME_LOST);
+    box(m->gamewin, 0, 0);
+    gmpl_board_print(m);
+    wrefresh(m->gamewin);
+    util_session_write(m, GAME_LOST);
 }
 
 void
-handle_win(const Board *b)
+gmpl_handle_win(const Minecurses *m)
 {
-    endscreen(b, GAME_WON);
+    gmpl_endscreen(m, GAME_WON);
     getchar();
-    session_write(b, GAME_WON);
-    score_write(b);
+    util_session_write(m, GAME_WON);
+    util_score_write(m);
 }
 
-#undef Y
-#undef X
+#undef bx
+#undef by
+
+void
+gmpl_navigate(Minecurses *m, int *mv)
+{
+    static int y = 1, x = 2;
+    gmpl_curs_update(m, y, x);
+    m->x = ARRSPACE_X(x);
+    m->y = ARRSPACE_Y(y);
+    refresh();
+    gmpl_getmv(m, mv, &y, &x);
+}
+
+void
+gmpl_getmv(const Minecurses *m, int *mv, int *y, int *x)
+{
+    *mv = wgetch(m->gamewin);
+    switch (*mv)
+    {
+        case 'k': case 'K': /* FALLTHROUGH */
+        case 'w': case 'W':
+            gmpl_mvup(y);
+            break;
+        case 'j': case 'J': /* FALLTHROUGH */
+        case 's': case 'S':
+            gmpl_mvdown(y, YMAX(m->gamewin));
+            break;
+        case 'h': case 'H': /* FALLTHROUGH */
+        case 'a': case 'A':
+            gmpl_mvleft(x);
+            break;
+        case 'l': case 'L': /* FALLTHROUGH */
+        case 'd': case 'D':
+            gmpl_mvright(x, XMAX(m->gamewin));
+            break;
+    }
+}
+
+void
+gmpl_mvup(int *y)
+{
+    (*y)--;
+    if (*y < 1) *y = 1;
+}
+
+void
+gmpl_mvdown(int *y, int ymax)
+{
+    (*y)++;
+    if (*y > ymax-2) *y = ymax-2;
+}
+
+void
+gmpl_mvleft(int *x)
+{
+    *x -= 3;
+    if (*x < 2) *x = 2;
+}
+
+void
+gmpl_mvright(int *x, int xmax)
+{
+    *x += 3;
+    if (*x > xmax-3) *x = xmax-3;
+}
+
+void
+gmpl_curs_update(const Minecurses *m, int y, int x)
+{
+    wmove(m->gamewin, y, x);
+}
+
+void
+gmpl_session_info(const Minecurses *m)
+{
+    mvprintw(0, 0, "Current position: (%d, %d) ", m->x, m->y);
+    mvprintw(0, XMID(stdscr) - strlen("Defused mines: x/x")/2,
+            "Defused mines: %d/%d", m->numdefused, m->nummines);
+    mvprintw(0, XMAX(stdscr) - strlen("m Controls"), "m Controls");
+}
+
+void
+gmpl_endscreen(const Minecurses *m, State state)
+{
+    wclear(m->gamewin);
+    wrefresh(m->gamewin);
+    attron(A_BOLD);
+    switch (state)
+    {
+        case GAME_WON:
+            mvprintw(YMID(stdscr)-2, XMID(stdscr)-11,
+                    "You defused all the mines!");
+            mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, "You won :)");
+            break;
+        case GAME_LOST:
+            mvprintw(YMID(stdscr)-2, XMID(stdscr)-24,
+                    "You hit a mine! (or tried to defuse the wrong cell)");
+            mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, "Game over :(");
+            break;
+    }
+    mvprintw(YMID(stdscr), XMID(stdscr)-11, "Press any key to continue");
+    refresh();
+    attroff(A_BOLD);
+}
