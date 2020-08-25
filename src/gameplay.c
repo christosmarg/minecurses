@@ -54,7 +54,6 @@ gmpl_start(Minecurses *m)
                 util_reset(m);
                 util_game_init(m);
                 break;
-            default: break;
         }
     } while (((by >= 0 && by < m->rows) &&
             (bx >= 0 && bx < m->cols))  &&

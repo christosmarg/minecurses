@@ -35,7 +35,7 @@ Additional controls
 
 ## Execution
 
-### Linux / Unix / macOS
+### UNIX-like operating systems
 
 **Dependencies**
 * `make`
@@ -49,6 +49,10 @@ $ make
 $ make run
 $ make clean # optional
 ```
+
+### Windows
+
+Doesn't work.
 
 ## Preview
 
