@@ -11,8 +11,7 @@ gmpl_start(Minecurses *m)
     m->numdefused = 0;
     int move;
 
-    do
-    {
+    do {
         erase();
         delwin(m->gamewin);
         refresh();
@@ -56,9 +55,9 @@ gmpl_start(Minecurses *m)
                 break;
         }
     } while (((by >= 0 && by < m->rows) &&
-            (bx >= 0 && bx < m->cols))  &&
-            m->numdefused < m->nummines && !m->gameover &&
-            tolower((char)move) != MOVE_QUIT);  
+             (bx  >= 0 && bx < m->cols))  &&
+             m->numdefused < m->nummines && !m->gameover &&
+             tolower((char)move) != MOVE_QUIT);  
 
     if (m->gameover) gmpl_handle_gameover(m);
     if (m->numdefused == m->nummines) gmpl_handle_win(m);
@@ -67,21 +66,18 @@ gmpl_start(Minecurses *m)
 void
 gmpl_board_print(const Minecurses *m)
 {    
-    int i, j, x, y = 1;
+    size_t i, j, x, y = 1;
     gmpl_grid_print(m);
     wattron(m->gamewin, A_BOLD);
-    for (i = 0; i < m->rows; i++)
-    {
+    for (i = 0; i < m->rows; y++, i++)
         for (j = 0, x = 2; j < m->cols; j++, x += 3)
             mvwaddch(m->gamewin, y, x, m->dispboard[i][j]);
-        y++;
-    }
 }
 
 void
 gmpl_grid_print(const Minecurses *m)
 {
-    int i, j;
+    size_t i, j;
     wattroff(m->gamewin, A_BOLD);
     for (i = 1; i <= m->rows; i++)
     {
@@ -97,7 +93,7 @@ gmpl_open_cell(Minecurses *m)
 {
     gmpl_transfer(m);
     gmpl_reveal(m);
-    return (m->dispboard[by][bx] == MINE) ? TRUE : FALSE;
+    return (m->dispboard[by][bx] == MINE);
 }
 
 void
@@ -138,7 +134,7 @@ gmpl_reveal(const Minecurses *m)
 int
 gmpl_is_defused(const Minecurses *m)
 {
-    return (m->dispboard[by][bx] == MINE_DEFUSED) ? TRUE : FALSE;
+    return (m->dispboard[by][bx] == MINE_DEFUSED);
 }
 
 void

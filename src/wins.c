@@ -35,15 +35,15 @@ wins_menu_options(void)
 void
 wins_menu_fill(WINDOW *opts)
 {
-    mvwprintw(opts, 1, 1, "q    Quit");
-    mvwprintw(opts, 2, 1, "w/k  Move up");
-    mvwprintw(opts, 3, 1, "s/j  Move down");
-    mvwprintw(opts, 4, 1, "a/h  Move left");
-    mvwprintw(opts, 5, 1, "d/l  Move right");
-    mvwprintw(opts, 6, 1, "f    Flag cell");
-    mvwprintw(opts, 7, 1, "g    Defuse (if flagged only)");
-    mvwprintw(opts, 8, 1, "p    Pause music");
-    mvwprintw(opts, 9, 1, "+    Volume up");
+    mvwprintw(opts, 1, 1,  "q    Quit");
+    mvwprintw(opts, 2, 1,  "w/k  Move up");
+    mvwprintw(opts, 3, 1,  "s/j  Move down");
+    mvwprintw(opts, 4, 1,  "a/h  Move left");
+    mvwprintw(opts, 5, 1,  "d/l  Move right");
+    mvwprintw(opts, 6, 1,  "f    Flag cell");
+    mvwprintw(opts, 7, 1,  "g    Defuse (if flagged only)");
+    mvwprintw(opts, 8, 1,  "p    Pause music");
+    mvwprintw(opts, 9, 1,  "+    Volume up");
     mvwprintw(opts, 10, 1, "-   Volume down");
     mvwprintw(opts, 11, 1, "[ENTER]/o Open cell");
     mvwprintw(opts, 13, 1, "Press any key to quit the menu");

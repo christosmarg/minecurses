@@ -3,11 +3,10 @@
 void *
 audio_play(void *tid)
 {
-    /*int tid = (long)threadid;*/
-    Mix_Music *music = NULL;
+    /*int threadid = (long)tid;*/
     SDL_Init(SDL_INIT_AUDIO);
     Mix_OpenAudio(44100, MIX_DEFAULT_FORMAT, 1, 4096);
-    music = Mix_LoadMUS(AUDIO_PATH);
+    Mix_Music *music = Mix_LoadMUS(AUDIO_PATH);
 
     Mix_PlayMusic(music, -1);
     while (Mix_PlayingMusic());

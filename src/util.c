@@ -26,8 +26,7 @@ int
 util_cols_set(void)
 {
     int cols;
-    do
-    {
+    do {
         mvprintw(YMAX(stdscr)-4, 1, "Columns (Min = 5, Max = %d): ",
                 ARRSPACE_X(XMAX(stdscr)) - 2);
         refresh();
@@ -41,8 +40,7 @@ int
 util_rows_set(void)
 {
     int rows;
-    do
-    {
+    do {
         mvprintw(YMAX(stdscr)-3, 1, "Rows (Min = 5, Max = %d): ",
                 ARRSPACE_Y(YMAX(stdscr)) - 3);
         refresh();
@@ -56,8 +54,7 @@ int
 util_nummines_set(int dimensions)
 {
     int nmines;
-    do
-    {
+    do {
         mvprintw(YMAX(stdscr)-2, 1, "Mines (Max = %d): ", dimensions-15);
         refresh();
         scanw("%d", &nmines);
@@ -69,20 +66,23 @@ util_nummines_set(int dimensions)
 void
 util_dealloc_boards(Minecurses *m)
 {
-    int i;
-    for (i = 0; i < m->rows; i++)
+    if (!m->dispboard && !m->mineboard)
     {
-        free(m->dispboard[i]);
-        free(m->mineboard[i]);
+        size_t i;
+        for (i = 0; i < m->rows; i++)
+        {
+            free(m->dispboard[i]);
+            free(m->mineboard[i]);
+        }
+        free(m->dispboard);
+        free(m->mineboard);
     }
-    free(m->dispboard);
-    free(m->mineboard);
 }
 
 void
 util_session_write(const Minecurses *m, State state)
 {
-    int i, j;
+    size_t i, j;
     FILE *fsession = fopen(SESSION_PATH, "w");
     if (fsession == NULL) util_die();
     else
@@ -106,8 +106,8 @@ util_session_write(const Minecurses *m, State state)
 void
 util_score_write(const Minecurses *m)
 {
-    FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
     char *playername = util_playername_get();
+    FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
     if (scorelog == NULL) util_die();
     else
     {

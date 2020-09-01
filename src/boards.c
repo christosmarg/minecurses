@@ -3,18 +3,14 @@
 void
 dispboard_init(Minecurses *m)
 {
-    int i;
-    m->dispboard = (char **)malloc(m->rows * sizeof(char *));
-    for (i = 0; i < m->rows; i++)
-        m->dispboard[i] = (char *)malloc(m->cols);
-    if (m->dispboard == NULL) util_die();
-    else dispboard_fill(m);
+    BOARD_ALLOC(m->dispboard, m->rows, m->cols);
+    dispboard_fill(m);
 }
 
 void
 dispboard_fill(Minecurses *m)
 {
-    int i, j;
+    size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
             m->dispboard[i][j] = BLANK;
@@ -23,24 +19,16 @@ dispboard_fill(Minecurses *m)
 void
 mineboard_init(Minecurses *m)
 {
-    int i;
-    m->mineboard = (char **)malloc(m->rows * sizeof(char *));
-    for (i = 0; i < m->rows; i++)
-        m->mineboard[i] = (char *)malloc(m->cols);
-
-    if (m->mineboard == NULL) util_die();
-    else
-    {
-        mineboard_mines_place(m);
-        mineboard_add_adj(m);
-        mineboard_spaces_fill(m);
-    }
+    BOARD_ALLOC(m->mineboard, m->rows, m->cols);
+    mineboard_mines_place(m);
+    mineboard_add_adj(m);
+    mineboard_spaces_fill(m);
 }
 
 void
 mineboard_mines_place(Minecurses *m)
 {
-    int i, r, c;
+    size_t i, r, c;
     srand(time(NULL));
     for (i = 0; i < m->nummines; i++)
     {
@@ -53,7 +41,7 @@ mineboard_mines_place(Minecurses *m)
 void
 mineboard_add_adj(Minecurses *m)
 {
-    int i, j;
+    size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
             if (!mineboard_is_mine(m, i, j))
@@ -63,7 +51,7 @@ mineboard_add_adj(Minecurses *m)
 int
 mineboard_is_mine(const Minecurses *m, int r, int c)
 {
-    return (m->mineboard[r][c] == MINE) ? TRUE : FALSE;
+    return (m->mineboard[r][c] == MINE);
 }
 
 uint8_t
@@ -86,13 +74,13 @@ mineboard_mines_count_adj(const Minecurses *m, int r, int c)
 int
 mineboard_out_of_bounds(const Minecurses *m, int r, int c)
 {
-    return (r < 0 || r > m->rows-1 || c < 0 || c > m->cols-1) ? TRUE : FALSE;
+    return (r < 0 || r > m->rows-1 || c < 0 || c > m->cols-1);
 }
 
 void
 mineboard_spaces_fill(Minecurses *m)
 {
-    int i, j;
+    size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
             if (m->mineboard[i][j] != MINE && m->mineboard[i][j] == '0')

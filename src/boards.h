@@ -8,6 +8,13 @@
 #define BLANK ' '
 #define MINE  '*'
 
+#define BOARD_ALLOC(board, rows, cols) \
+    size_t i; \
+    board = (char **)malloc(rows * sizeof(char *)); \
+    for (i = 0; i < rows; i++) \
+        board[i] = (char *)malloc(cols); \
+    if (board == NULL) util_die();
+
 extern void    dispboard_init(Minecurses *m);
 extern void    dispboard_fill(Minecurses *m);
 extern void    mineboard_init(Minecurses *m);
