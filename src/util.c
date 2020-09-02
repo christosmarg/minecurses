@@ -2,7 +2,7 @@
 
 static int   cols_set(void);
 static int   rows_set(void);
-static int   nummines_set(int dimensions);
+static int   nummines_set(int);
 static char *playername_get(void);
 
 void
@@ -30,11 +30,9 @@ util_game_init(struct Minecurses *m)
 void
 util_dealloc_boards(struct Minecurses *m)
 {
-    if (!m->dispboard && !m->mineboard)
-    {
+    if (!m->dispboard && !m->mineboard) {
         size_t i;
-        for (i = 0; i < m->rows; i++)
-        {
+        for (i = 0; i < m->rows; i++) {
             free(m->dispboard[i]);
             free(m->mineboard[i]);
         }
@@ -49,16 +47,14 @@ util_session_write(const struct Minecurses *m, State state)
     size_t i, j;
     FILE *fsession = fopen(SESSION_PATH, "w");
     if (fsession == NULL) util_die();
-    else
-    {
+    else {
         state == GAME_WON
             ? fprintf(fsession, "Mine hit at position (%d, %d)\n\n",
                     m->x+1, m->y+1)
             : fprintf(fsession, "Last mine defused at position (%d, %d)\n\n",
                     m->x+1, m->y+1);
         fprintf(fsession, "Board overview\n\n");
-        for (i = 0; i < m->rows; i++)
-        {
+        for (i = 0; i < m->rows; i++) {
             for (j = 0; j < m->cols; j++)
                 fprintf(fsession, "%c ", m->mineboard[i][j]);
             fprintf(fsession, "\n");
@@ -73,8 +69,7 @@ util_score_write(const struct Minecurses *m)
     char *playername = playername_get();
     FILE *scorelog = fopen(SCORE_LOG_PATH, "a");
     if (scorelog == NULL) util_die();
-    else
-    {
+    else {
         fprintf(scorelog, "%s,%d,%dx%d\n",
                 playername, m->numdefused, m->cols, m->rows);
         clrtoeol();
@@ -85,7 +80,6 @@ util_score_write(const struct Minecurses *m)
     fclose(scorelog);
     free(playername);
 }
-
 
 void
 util_die(void)

@@ -23,11 +23,11 @@ typedef enum {
     GAME_LOST
 } State;
 
-extern void  util_reset(struct Minecurses *m);
-extern void  util_game_init(struct Minecurses *m);
-extern void  util_dealloc_boards(struct Minecurses *m);
-extern void  util_session_write(const struct Minecurses *m, State state);
-extern void  util_score_write(const struct Minecurses *m);
+extern void  util_reset(struct Minecurses *);
+extern void  util_game_init(struct Minecurses *);
+extern void  util_dealloc_boards(struct Minecurses *);
+extern void  util_session_write(const struct Minecurses *, State);
+extern void  util_score_write(const struct Minecurses *);
 extern void  util_die(void);
 
 #endif /* UTIL_H */

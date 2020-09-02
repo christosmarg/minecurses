@@ -18,6 +18,6 @@
 #define MINE_DEFUSED      'd'
 #define CELL_FLAGGED      'F'
 
-extern void gmpl_start(struct Minecurses *m);
+extern void gmpl_start(struct Minecurses *);
 
 #endif /* GAMEPLAY_H */

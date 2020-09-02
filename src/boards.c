@@ -38,8 +38,7 @@ mineboard_mines_place(struct Minecurses *m)
 {
     size_t i, r, c;
     srand(time(NULL));
-    for (i = 0; i < m->nummines; i++)
-    {
+    for (i = 0; i < m->nummines; i++) {
         r = rand() % m->rows;
         c = rand() % m->cols;
         m->mineboard[r][c] = MINE;

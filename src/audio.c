@@ -20,8 +20,7 @@ void
 audio_change_volume(char option)
 {
     static int volume = MIX_MAX_VOLUME;
-    switch (option)
-    {
+    switch (option) {
         case '+':
             if (volume == MIX_MAX_VOLUME) break;
             else Mix_VolumeMusic(volume += VOL_STEP);

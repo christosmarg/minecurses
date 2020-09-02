@@ -41,8 +41,7 @@ gmpl_start(struct Minecurses *m)
         session_info(m);
         navigate(m, &move);
 
-        switch (tolower((char)move))
-        {
+        switch (tolower((char)move)) {
             case MOVE_ENTER:         /* FALLTHROUGH */
             case MOVE_OPEN_CELL:
                 m->gameover = open_cell(m);
@@ -51,12 +50,14 @@ gmpl_start(struct Minecurses *m)
                 handle_flags(m);
                 break;
             case MOVE_DEFUSE_CELL:
-                if (m->dispboard[by][bx] == CELL_FLAGGED && m->mineboard[by][bx] == MINE)
+                if (m->dispboard[by][bx] == CELL_FLAGGED
+                && m->mineboard[by][bx] == MINE)
                 {
                     m->numdefused++;
                     defuse_mine(m);
                 }
-                else if (m->dispboard[by][bx] == CELL_FLAGGED && m->mineboard[by][bx] != MINE)
+                else if (m->dispboard[by][bx] == CELL_FLAGGED
+                      && m->mineboard[by][bx] != MINE)
                     m->gameover = TRUE;              
                 break;
             case MOVE_PAUSE_AUDIO:
@@ -75,10 +76,10 @@ gmpl_start(struct Minecurses *m)
                 util_game_init(m);
                 break;
         }
-    } while (((by >= 0 && by < m->rows) &&
-             (bx  >= 0 && bx < m->cols))  &&
-             m->numdefused < m->nummines && !m->gameover &&
-             tolower((char)move) != MOVE_QUIT);  
+    } while (((by >= 0 && by < m->rows)
+             && (bx  >= 0 && bx < m->cols)) 
+             && m->numdefused < m->nummines && !m->gameover
+             && tolower((char)move) != MOVE_QUIT);  
 
     if (m->gameover) handle_gameover(m);
     if (m->numdefused == m->nummines) handle_win(m);
@@ -100,8 +101,7 @@ grid_print(const struct Minecurses *m)
 {
     size_t i, j;
     wattroff(m->gamewin, A_BOLD);
-    for (i = 1; i <= m->rows; i++)
-    {
+    for (i = 1; i <= m->rows; i++) {
         wmove(m->gamewin, i, 1);
         for (j = 0; j < m->cols; j++)
             wprintw(m->gamewin, "[ ]");
@@ -122,8 +122,8 @@ handle_flags(struct Minecurses *m)
 {
     if (m->dispboard[by][bx] == CELL_FLAGGED)
         m->dispboard[by][bx] = BLANK;
-    else if (m->dispboard[by][bx] != CELL_FLAGGED &&
-             m->dispboard[by][bx] != BLANK)
+    else if (m->dispboard[by][bx] != CELL_FLAGGED
+         && m->dispboard[by][bx] != BLANK)
         return;
     else m->dispboard[by][bx] = CELL_FLAGGED;
     reveal(m);
@@ -206,8 +206,7 @@ void
 getmv(const struct Minecurses *m, int *mv, int *y, int *x)
 {
     *mv = wgetch(m->gamewin);
-    switch (*mv)
-    {
+    switch (*mv) {
         case 'k': case 'K': /* FALLTHROUGH */
         case 'w': case 'W':
             mvup(y);
@@ -276,8 +275,7 @@ endscreen(const struct Minecurses *m, State state)
     wclear(m->gamewin);
     wrefresh(m->gamewin);
     attron(A_BOLD);
-    switch (state)
-    {
+    switch (state) {
         case GAME_WON:
             mvprintw(YMID(stdscr)-2, XMID(stdscr)-11,
                     "You defused all the mines!");
