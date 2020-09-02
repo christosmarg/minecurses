@@ -19,7 +19,7 @@ main(int argc, char **argv)
     return EXIT_FAILURE;
 #endif /* NCURSES_VERSION */
     curses_init();
-    Minecurses m;
+    struct Minecurses m;
     util_reset(&m);
     m.gamewin = wins_gamewin_init(m.rows, m.cols);
     util_game_init(&m);

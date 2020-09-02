@@ -1,4 +1,5 @@
 TARGET = minecurses
+#INSTALL_PATH = /usr/local/bin
 
 SRC_DIR = src
 OBJ_DIR = obj
@@ -7,14 +8,16 @@ BIN_DIR = bin
 SRC = $(wildcard $(SRC_DIR)/*.c)
 OBJ = $(SRC:$(SRC_DIR)/%.c=$(OBJ_DIR)/%.o)
 
-CC = gcc
-CPPFLAGS += -Iinclude -pedantic
-CFLAGS += -Wall -std=c99
-LDFLAGS += -Llib
-LDLIBS += -lm -lncurses -lSDL2 -lSDL2_mixer -pthread
-
+CP=cp
 MOVE = mv
 MKDIR_P = mkdir -p
+RM_DIR=rm -rf
+
+CC = gcc
+CPPFLAGS += -Iinclude -pedantic
+CFLAGS += -Wall -std=c99 -O3
+LDFLAGS += -Llib
+LDLIBS += -lncurses -lSDL2 -lSDL2_mixer -lpthread
 
 .PHONY: all clean
 
@@ -32,5 +35,8 @@ $(OBJ_DIR)/%.o: $(SRC_DIR)/%.c
 run:
 	./$(BIN_DIR)/$(TARGET)
 
+install: $(TARGET)
+	$(CP) $(BIN_DIR)/$(TARGET) $(INSTALL_PATH)
+	
 clean:
-	$(RM) $(OBJ) $(BIN_DIR)/$(TARGET)
+	$(RM_DIR) $(OBJ_DIR) $(BIN_DIR)

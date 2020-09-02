@@ -4,7 +4,7 @@
 #include <stdlib.h>
 #include <ncurses.h>
 
-typedef struct {
+struct Minecurses {
     char  **dispboard;
     char  **mineboard;
     int     rows, cols;
@@ -12,8 +12,8 @@ typedef struct {
     int     gameover;
     int     x, y;
     WINDOW *gamewin;
-} Minecurses;
+};
 
-extern Minecurses m;
+extern struct Minecurses m;
 
 #endif /* MAIN_H */

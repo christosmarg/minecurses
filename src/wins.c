@@ -1,5 +1,7 @@
 #include "wins.h"
 
+static void menu_fill(struct _win_st *);
+
 WINDOW *
 wins_gamewin_init(int rows, int cols)
 {
@@ -24,7 +26,7 @@ wins_menu_options(void)
     WINDOW *opts = newwin(h, w, wy, wx);
     werase(opts);
     box(opts, 0, 0);
-    wins_menu_fill(opts);
+    menu_fill(opts);
     wrefresh(opts);
     wgetch(opts);
     werase(opts);
@@ -33,7 +35,7 @@ wins_menu_options(void)
 }
 
 void
-wins_menu_fill(WINDOW *opts)
+menu_fill(WINDOW *opts)
 {
     mvwprintw(opts, 1, 1,  "q    Quit");
     mvwprintw(opts, 2, 1,  "w/k  Move up");

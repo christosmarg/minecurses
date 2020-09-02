@@ -1,14 +1,22 @@
 #include "boards.h"
 
+static void    dispboard_fill(struct Minecurses *);
+static void    mineboard_mines_place(struct Minecurses *);
+static void    mineboard_add_adj(struct Minecurses *);
+static int     mineboard_is_mine(const struct Minecurses *, int, int);
+static uint8_t mineboard_mines_count_adj(const struct Minecurses *, int, int);
+static int     mineboard_out_of_bounds(const struct Minecurses *, int, int);
+static void    mineboard_spaces_fill(struct Minecurses *);
+
 void
-dispboard_init(Minecurses *m)
+dispboard_init(struct Minecurses *m)
 {
     BOARD_ALLOC(m->dispboard, m->rows, m->cols);
     dispboard_fill(m);
 }
 
 void
-dispboard_fill(Minecurses *m)
+dispboard_fill(struct Minecurses *m)
 {
     size_t i, j;
     for (i = 0; i < m->rows; i++)
@@ -17,7 +25,7 @@ dispboard_fill(Minecurses *m)
 }
 
 void
-mineboard_init(Minecurses *m)
+mineboard_init(struct Minecurses *m)
 {
     BOARD_ALLOC(m->mineboard, m->rows, m->cols);
     mineboard_mines_place(m);
@@ -26,7 +34,7 @@ mineboard_init(Minecurses *m)
 }
 
 void
-mineboard_mines_place(Minecurses *m)
+mineboard_mines_place(struct Minecurses *m)
 {
     size_t i, r, c;
     srand(time(NULL));
@@ -39,7 +47,7 @@ mineboard_mines_place(Minecurses *m)
 }
 
 void
-mineboard_add_adj(Minecurses *m)
+mineboard_add_adj(struct Minecurses *m)
 {
     size_t i, j;
     for (i = 0; i < m->rows; i++)
@@ -49,13 +57,13 @@ mineboard_add_adj(Minecurses *m)
 }
 
 int
-mineboard_is_mine(const Minecurses *m, int r, int c)
+mineboard_is_mine(const struct Minecurses *m, int r, int c)
 {
     return (m->mineboard[r][c] == MINE);
 }
 
 uint8_t
-mineboard_mines_count_adj(const Minecurses *m, int r, int c)
+mineboard_mines_count_adj(const struct Minecurses *m, int r, int c)
 {
     uint8_t nadj = 0;
 
@@ -72,13 +80,13 @@ mineboard_mines_count_adj(const Minecurses *m, int r, int c)
 }
 
 int
-mineboard_out_of_bounds(const Minecurses *m, int r, int c)
+mineboard_out_of_bounds(const struct Minecurses *m, int r, int c)
 {
     return (r < 0 || r > m->rows-1 || c < 0 || c > m->cols-1);
 }
 
 void
-mineboard_spaces_fill(Minecurses *m)
+mineboard_spaces_fill(struct Minecurses *m)
 {
     size_t i, j;
     for (i = 0; i < m->rows; i++)
