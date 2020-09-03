@@ -7,6 +7,10 @@
 #include <SDL2/SDL_mixer.h>
 #include "defs.h"
 
+#ifdef _WIN_32
+typedef unsigned char uint8_t
+#endif /* _WIN_32 */
+
 /* structs and enums */
 struct Minecurses {
     char  **dispboard;
@@ -35,9 +39,7 @@ static void    dispboard_fill(struct Minecurses *);
 static void    mineboard_init(struct Minecurses *);
 static void    mineboard_mines_place(struct Minecurses *);
 static void    mineboard_add_adj(struct Minecurses *);
-static int     mineboard_is_mine(const struct Minecurses *, int, int);
 static uint8_t mineboard_mines_count_adj(const struct Minecurses *, int, int);
-static int     mineboard_out_of_bounds(const struct Minecurses *, int, int);
 static void    mineboard_spaces_fill(struct Minecurses *);
 static void    board_navigate(struct Minecurses *, int *);
 static void    boards_dealloc(struct Minecurses *);
@@ -52,7 +54,6 @@ static void    mvdown(int *, int);
 static void    mvleft(int *);
 static void    mvright(int *, int);
 static void    curses_init(void);
-static void    curs_update(const struct Minecurses *, int, int);
 static void    board_print(const struct Minecurses *);
 static void    grid_print(const struct Minecurses *);
 static WINDOW *gamewin_init(int, int);
@@ -68,7 +69,6 @@ static void    score_write(const struct Minecurses *);
 static char   *playername_get(void);
 static void   *audio_play(void *);
 static void    audio_change_volume(char);
-static void    audio_pause(void);
 static void    die(void);
 
 /* function implementations */
@@ -124,17 +124,17 @@ game_start(struct Minecurses *m)
                 break;
             case MOVE_DEFUSE_CELL:
                 if (m->dispboard[by][bx] == CELL_FLAGGED
-                && m->mineboard[by][bx] == MINE)
+                && m->mineboard[by][bx] == CELL_MINE)
                 {
                     m->numdefused++;
                     mine_defuse(m);
                 }
                 else if (m->dispboard[by][bx] == CELL_FLAGGED
-                      && m->mineboard[by][bx] != MINE)
+                      && m->mineboard[by][bx] != CELL_MINE)
                     m->gameover = TRUE;              
                 break;
             case MOVE_PAUSE_AUDIO:
-                audio_pause();
+                AUDIO_PAUSE();
                 break;
             case MOVE_VOLUME_UP:     /* FALLTHROUGH */
             case MOVE_VOLUME_DOWN:
@@ -212,7 +212,7 @@ dispboard_fill(struct Minecurses *m)
     size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
-            m->dispboard[i][j] = BLANK;
+            m->dispboard[i][j] = CELL_BLANK;
 }
 
 void
@@ -232,7 +232,7 @@ mineboard_mines_place(struct Minecurses *m)
     for (i = 0; i < m->nummines; i++) {
         r = rand() % m->rows;
         c = rand() % m->cols;
-        m->mineboard[r][c] = MINE;
+        m->mineboard[r][c] = CELL_MINE;
     }
 }
 
@@ -242,37 +242,23 @@ mineboard_add_adj(struct Minecurses *m)
     size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
-            if (!mineboard_is_mine(m, i, j))
+            if (!IS_MINE(m, i, j))
                 m->mineboard[i][j] = mineboard_mines_count_adj(m, i, j) + '0';
-}
-
-int
-mineboard_is_mine(const struct Minecurses *m, int r, int c)
-{
-    return (m->mineboard[r][c] == MINE);
 }
 
 uint8_t
 mineboard_mines_count_adj(const struct Minecurses *m, int r, int c)
 {
     uint8_t nadj = 0;
-
-    if (!mineboard_out_of_bounds(m, r, c-1)   && m->mineboard[r][c-1]   == MINE) nadj++; // North
-    if (!mineboard_out_of_bounds(m, r, c+1)   && m->mineboard[r][c+1]   == MINE) nadj++; // South
-    if (!mineboard_out_of_bounds(m, r+1, c)   && m->mineboard[r+1][c]   == MINE) nadj++; // East
-    if (!mineboard_out_of_bounds(m, r-1, c)   && m->mineboard[r-1][c]   == MINE) nadj++; // West
-    if (!mineboard_out_of_bounds(m, r+1, c-1) && m->mineboard[r+1][c-1] == MINE) nadj++; // North-East
-    if (!mineboard_out_of_bounds(m, r-1, c-1) && m->mineboard[r-1][c-1] == MINE) nadj++; // North-West
-    if (!mineboard_out_of_bounds(m, r+1, c+1) && m->mineboard[r+1][c+1] == MINE) nadj++; // South-East
-    if (!mineboard_out_of_bounds(m, r-1, c+1) && m->mineboard[r-1][c+1] == MINE) nadj++; // South-West
-
+    if (!OUT_OF_BOUNDS(m, r, c-1)   && m->mineboard[r][c-1]   == CELL_MINE) nadj++; // North
+    if (!OUT_OF_BOUNDS(m, r, c+1)   && m->mineboard[r][c+1]   == CELL_MINE) nadj++; // South
+    if (!OUT_OF_BOUNDS(m, r+1, c)   && m->mineboard[r+1][c]   == CELL_MINE) nadj++; // East
+    if (!OUT_OF_BOUNDS(m, r-1, c)   && m->mineboard[r-1][c]   == CELL_MINE) nadj++; // West
+    if (!OUT_OF_BOUNDS(m, r+1, c-1) && m->mineboard[r+1][c-1] == CELL_MINE) nadj++; // North-East
+    if (!OUT_OF_BOUNDS(m, r-1, c-1) && m->mineboard[r-1][c-1] == CELL_MINE) nadj++; // North-West
+    if (!OUT_OF_BOUNDS(m, r+1, c+1) && m->mineboard[r+1][c+1] == CELL_MINE) nadj++; // South-East
+    if (!OUT_OF_BOUNDS(m, r-1, c+1) && m->mineboard[r-1][c+1] == CELL_MINE) nadj++; // South-West
     return nadj;
-}
-
-int
-mineboard_out_of_bounds(const struct Minecurses *m, int r, int c)
-{
-    return (r < 0 || r > m->rows-1 || c < 0 || c > m->cols-1);
 }
 
 void
@@ -281,7 +267,7 @@ mineboard_spaces_fill(struct Minecurses *m)
     size_t i, j;
     for (i = 0; i < m->rows; i++)
         for (j = 0; j < m->cols; j++)
-            if (m->mineboard[i][j] != MINE && m->mineboard[i][j] == '0')
+            if (m->mineboard[i][j] != CELL_MINE && m->mineboard[i][j] == '0')
                 m->mineboard[i][j] = '-';
 }
 
@@ -289,7 +275,7 @@ void
 board_navigate(struct Minecurses *m, int *mv)
 {
     static int y = 1, x = 2;
-    curs_update(m, y, x);
+    CURS_UPDATE(m, y, x);
     m->x = ARRSPACE_X(x);
     m->y = ARRSPACE_Y(y);
     refresh();
@@ -315,7 +301,7 @@ cell_open(struct Minecurses *m)
 {
     cell_transfer(m);
     cell_reveal(m);
-    return (m->dispboard[by][bx] == MINE);
+    return (m->dispboard[by][bx] == CELL_MINE);
 }
 
 void
@@ -337,9 +323,9 @@ void
 flags_handle(struct Minecurses *m)
 {
     if (m->dispboard[by][bx] == CELL_FLAGGED)
-        m->dispboard[by][bx] = BLANK;
+        m->dispboard[by][bx] = CELL_BLANK;
     else if (m->dispboard[by][bx] != CELL_FLAGGED
-         && m->dispboard[by][bx] != BLANK)
+         && m->dispboard[by][bx] != CELL_BLANK)
         return;
     else m->dispboard[by][bx] = CELL_FLAGGED;
     cell_reveal(m);
@@ -414,12 +400,6 @@ curses_init(void)
     initscr();
     noecho();
     cbreak();
-}
-
-void
-curs_update(const struct Minecurses *m, int y, int x)
-{
-    wmove(m->gamewin, y, x);
 }
 
 void
@@ -644,12 +624,6 @@ audio_change_volume(char option)
             else Mix_VolumeMusic(volume -= VOL_STEP);
             break;
     }
-}
-
-void
-audio_pause(void)
-{
-    (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();
 }
 
 void

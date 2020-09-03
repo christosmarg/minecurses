@@ -14,30 +14,38 @@
 #define MOVE_QUIT         'q'
 #define MINE_DEFUSED      'd'
 #define CELL_FLAGGED      'F'
-#define BLANK             ' '
-#define MINE              '*'
+#define CELL_BLANK        ' '
+#define CELL_MINE         '*'
 #define VOL_STEP          10
 #define SESSION_PATH      "log/session.txt"
 #define SCORE_LOG_PATH    "log/scorelog.csv"
 #define AUDIO_PATH        "res/detective-8bit.wav"
 
 /* macros */
-#define BOARD_ALLOC(board, rows, cols)  do {            \
-    size_t i;                                           \
-    (board) = (char **)malloc((rows) * sizeof(char *)); \
-    for (i = 0; i < (rows); i++)                        \
-        (board)[i] = (char *)malloc((cols));            \
-    if ((board) == NULL) die();                         \
+#define BOARD_ALLOC(board, rows, cols)  do {                           \
+    size_t i;                                                          \
+    (board) = (char **)malloc((rows) * sizeof(char *));                \
+    for (i = 0; i < (rows); i++)                                       \
+        (board)[i] = (char *)malloc((cols));                           \
+    if ((board) == NULL) die();                                        \
 } while (0)
 
-#define YMAX(x)        (getmaxy((x)))
-#define XMAX(x)        (getmaxx((x)))
-#define YMID(x)        (getmaxy((x)) / 2)
-#define XMID(x)        (getmaxx((x)) / 2)
-#define GRIDSPACE_X(x) ((x) * 3 + 2)
-#define GRIDSPACE_Y(y) ((y) + 2)
-#define ARRSPACE_X(x)  (((x) - 2) / 3)
-#define ARRSPACE_Y(y)  ((y) - 1)
-#define CENTER(x, y)   ((x) / 2 - (y) / 2)
+#define AUDIO_PAUSE() do {                                             \
+    (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();   \
+} while (0)
+
+#define YMAX(x)                (getmaxy((x)))
+#define XMAX(x)                (getmaxx((x)))
+#define YMID(x)                (getmaxy((x)) / 2)
+#define XMID(x)                (getmaxx((x)) / 2)
+#define GRIDSPACE_X(x)         ((x) * 3 + 2)
+#define GRIDSPACE_Y(y)         ((y) + 2)
+#define ARRSPACE_X(x)          (((x) - 2) / 3)
+#define ARRSPACE_Y(y)          ((y) - 1)
+#define CENTER(x, y)           ((x) / 2 - (y) / 2)
+#define CURS_UPDATE(m, y, x)   (wmove(m->gamewin, (y), (x)))
+#define IS_MINE(m, r, c)       ((m->mineboard[r][c]) == CELL_MINE)
+#define OUT_OF_BOUNDS(m, r, c) ((r) < 0 || (r) > ((m->rows)-1) ||      \
+                                (c) < 0 || (c) > ((m->cols)-1))
 
 #endif /* DEFS_H */
