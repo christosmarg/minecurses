@@ -7,10 +7,6 @@
 #include <SDL2/SDL_mixer.h>
 #include "defs.h"
 
-#ifdef _WIN_32
-typedef unsigned char uint8_t
-#endif /* _WIN_32 */
-
 /* structs and enums */
 struct Minecurses {
     char  **dispboard;
