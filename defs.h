@@ -1,7 +1,6 @@
 #ifndef DEFS_H
 #define DEFS_H
 
-/* constants */
 #define MOVE_ENTER        '\n'
 #define MOVE_OPEN_CELL    'o'
 #define MOVE_FLAG_CELL    'f'
@@ -21,14 +20,10 @@
 #define SCORE_LOG_PATH    "log/scorelog.csv"
 #define AUDIO_PATH        "res/detective-8bit.wav"
 
-/* macros */
-#define BOARD_ALLOC(board, rows, cols)  do {                           \
-    size_t i;                                                          \
-    (board) = (char **)malloc((rows) * sizeof(char *));                \
-    for (i = 0; i < (rows); i++)                                       \
-        (board)[i] = (char *)malloc((cols));                           \
-    if ((board) == NULL) die();                                        \
-} while (0)
+#define CURSES_INIT()                                                  \
+    initscr();                                                         \
+    noecho();                                                          \
+    cbreak();
 
 #define AUDIO_PAUSE() do {                                             \
     (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();   \

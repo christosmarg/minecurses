@@ -7,14 +7,15 @@
 #include <SDL2/SDL_mixer.h>
 #include "defs.h"
 
-/* structs and enums */
 struct Minecurses {
     char  **dispboard;
     char  **mineboard;
     int     rows, cols;
-    int     nummines, numdefused;
-    int     gameover;
+    int     nummines;
+    int     numdefused;
+    int     move;
     int     x, y;
+    int     gameover;
     WINDOW *gamewin;
 };
 
@@ -23,33 +24,31 @@ enum State {
     GAME_LOST
 };
 
-/* function declarations */
 static void    game_init(struct Minecurses *);
 static void    game_reset(struct Minecurses *);
 static void    game_start(struct Minecurses *);
 static int     cols_set(void);
 static int     rows_set(void);
 static int     nummines_set(int);
-static void    dispboard_init(struct Minecurses *);
 static void    dispboard_fill(struct Minecurses *);
 static void    mineboard_init(struct Minecurses *);
 static void    mineboard_mines_place(struct Minecurses *);
 static void    mineboard_add_adj(struct Minecurses *);
 static uint8_t mineboard_mines_count_adj(const struct Minecurses *, int, int);
 static void    mineboard_spaces_fill(struct Minecurses *);
-static void    board_navigate(struct Minecurses *, int *);
+static void    boards_alloc(struct Minecurses *);
 static void    boards_dealloc(struct Minecurses *);
+static void    board_navigate(struct Minecurses *);
 static int     cell_open(struct Minecurses *);
 static void    cell_transfer(struct Minecurses *);
 static void    cell_reveal(const struct Minecurses *);
 static void    flags_handle(struct Minecurses *);
 static void    mine_defuse(struct Minecurses *);
-static void    mvget(const struct Minecurses *, int *, int *, int *);
+static void    mvget(struct Minecurses *, int *, int *);
 static void    mvup(int *);
 static void    mvdown(int *, int);
 static void    mvleft(int *);
 static void    mvright(int *, int);
-static void    curses_init(void);
 static void    board_print(const struct Minecurses *);
 static void    grid_print(const struct Minecurses *);
 static WINDOW *gamewin_init(int, int);
@@ -67,11 +66,11 @@ static void   *audio_play(void *);
 static void    audio_change_volume(char);
 static void    die(void);
 
-/* function implementations */
 void
 game_init(struct Minecurses *m)
 {
-    dispboard_init(m);
+    boards_alloc(m);
+    dispboard_fill(m);
     mineboard_init(m);
 }
 
@@ -96,10 +95,9 @@ game_reset(struct Minecurses *m)
 void
 game_start(struct Minecurses *m)
 {
-    m->x = m->y = 0;
-    m->gameover = FALSE;
+    bx = by = 0;
     m->numdefused = 0;
-    int move;
+    m->gameover = FALSE;
 
     do {
         erase();
@@ -108,9 +106,9 @@ game_start(struct Minecurses *m)
         m->gamewin = gamewin_init(m->rows, m->cols);
         board_print(m);
         session_info(m);
-        board_navigate(m, &move);
+        board_navigate(m);
 
-        switch (tolower((char)move)) {
+        switch (tolower((char)m->move)) {
             case MOVE_ENTER:         /* FALLTHROUGH */
             case MOVE_OPEN_CELL:
                 m->gameover = cell_open(m);
@@ -120,7 +118,7 @@ game_start(struct Minecurses *m)
                 break;
             case MOVE_DEFUSE_CELL:
                 if (m->dispboard[by][bx] == CELL_FLAGGED
-                && m->mineboard[by][bx] == CELL_MINE)
+                &&  m->mineboard[by][bx] == CELL_MINE)
                 {
                     m->numdefused++;
                     mine_defuse(m);
@@ -134,7 +132,7 @@ game_start(struct Minecurses *m)
                 break;
             case MOVE_VOLUME_UP:     /* FALLTHROUGH */
             case MOVE_VOLUME_DOWN:
-                audio_change_volume(move);
+                audio_change_volume(m->move);
                 break;
             case MOVE_OPEN_MENU:
                 menu_handle(m);
@@ -147,8 +145,9 @@ game_start(struct Minecurses *m)
         }
     } while (((by >= 0 && by < m->rows)
              && (bx  >= 0 && bx < m->cols)) 
-             && m->numdefused < m->nummines && !m->gameover
-             && tolower((char)move) != MOVE_QUIT);  
+             && m->numdefused < m->nummines
+             && !m->gameover
+             && tolower((char)m->move) != MOVE_QUIT);
 
     if (m->gameover) gameover_handle(m);
     if (m->numdefused == m->nummines) win_handle(m);
@@ -196,13 +195,6 @@ nummines_set(int dimensions)
 }
 
 void
-dispboard_init(struct Minecurses *m)
-{
-    BOARD_ALLOC(m->dispboard, m->rows, m->cols);
-    dispboard_fill(m);
-}
-
-void
 dispboard_fill(struct Minecurses *m)
 {
     size_t i, j;
@@ -214,7 +206,6 @@ dispboard_fill(struct Minecurses *m)
 void
 mineboard_init(struct Minecurses *m)
 {
-    BOARD_ALLOC(m->mineboard, m->rows, m->cols);
     mineboard_mines_place(m);
     mineboard_add_adj(m);
     mineboard_spaces_fill(m);
@@ -268,22 +259,35 @@ mineboard_spaces_fill(struct Minecurses *m)
 }
 
 void
-board_navigate(struct Minecurses *m, int *mv)
+board_navigate(struct Minecurses *m)
 {
     static int y = 1, x = 2;
     CURS_UPDATE(m, y, x);
     m->x = ARRSPACE_X(x);
     m->y = ARRSPACE_Y(y);
     refresh();
-    mvget(m, mv, &y, &x);
+    mvget(m, &y, &x);
+}
+
+void
+boards_alloc(struct Minecurses *m)
+{
+    size_t i = 0;
+    m->dispboard = (char **)malloc(m->rows * sizeof(char *));
+    m->mineboard = (char **)malloc(m->rows * sizeof(char *));
+    for (; i < m->rows; i++) {
+        m->dispboard[i] = (char *)malloc(m->cols);
+        m->mineboard[i] = (char *)malloc(m->cols);
+    }
+    if (!m->dispboard || !m->mineboard) die();
 }
 
 void
 boards_dealloc(struct Minecurses *m)
 {
     if (!m->dispboard && !m->mineboard) {
-        size_t i;
-        for (i = 0; i < m->rows; i++) {
+        size_t i = 0;
+        for (; i < m->rows; i++) {
             free(m->dispboard[i]);
             free(m->mineboard[i]);
         }
@@ -339,10 +343,9 @@ mine_defuse(struct Minecurses *m)
 #undef by
 
 void
-mvget(const struct Minecurses *m, int *mv, int *y, int *x)
+mvget(struct Minecurses *m, int *y, int *x)
 {
-    *mv = wgetch(m->gamewin);
-    switch (*mv) {
+    switch (m->move = wgetch(m->gamewin)) {
         case 'k': case 'K': /* FALLTHROUGH */
         case 'w': case 'W':
             mvup(y);
@@ -388,14 +391,6 @@ mvright(int *x, int xmax)
 {
     *x += 3;
     if (*x > xmax-3) *x = xmax-3;
-}
-
-void
-curses_init(void)
-{
-    initscr();
-    noecho();
-    cbreak();
 }
 
 void
@@ -545,11 +540,11 @@ session_write(const struct Minecurses *m, const enum State state)
                     m->x+1, m->y+1)
             : fprintf(fsession, "Last mine defused at position (%d, %d)\n\n",
                     m->x+1, m->y+1);
-        fprintf(fsession, "Board overview\n\n");
+        fputs("Board overview\n\n", fsession);
         for (i = 0; i < m->rows; i++) {
             for (j = 0; j < m->cols; j++)
                 fprintf(fsession, "%c ", m->mineboard[i][j]);
-            fprintf(fsession, "\n");
+            fputs("\n", fsession);
         }           
     }
     fclose(fsession);
@@ -576,8 +571,7 @@ score_write(const struct Minecurses *m)
 char *
 playername_get(void)
 {   
-    char buffer[48];
-    char *playername;
+    char buffer[48], *playername;
     move(0, 0);
     echo();
     clrtoeol();
@@ -634,10 +628,10 @@ int
 main(int argc, char **argv)
 {   
 #ifndef NCURSES_VERSION
-    fprintf(stderr, "ncurses is needed in order to run this program.\n");
+    fputs("ncurses is needed in order to run this program.\n", stderr);
     return EXIT_FAILURE;
 #endif /* NCURSES_VERSION */
-    curses_init();
+    CURSES_INIT();
     struct Minecurses m;
     game_reset(&m);
     m.gamewin = gamewin_init(m.rows, m.cols);
