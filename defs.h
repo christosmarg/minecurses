@@ -16,9 +16,31 @@
 #define CELL_BLANK        ' '
 #define CELL_MINE         '*'
 #define VOL_STEP          10
+#define GRID_BOX          "[ ]"
+
 #define SESSION_PATH      "log/session.txt"
 #define SCORE_LOG_PATH    "log/scorelog.csv"
 #define AUDIO_PATH        "res/detective-8bit.wav"
+
+#define OPT_QUIT           "q      Quit"
+#define OPT_MOVE_UP        "w/k    Move up"
+#define OPT_MOVE_DOWN      "s/j    Move down"
+#define OPT_MOVE_LEFT      "a/h    Move left"
+#define OPT_MOVE_RIGHT     "d/l    Move right"
+#define OPT_FLAG_CELL      "f      Flag cell"
+#define OPT_DEFUSE         "g      Defuse (if flagged only)"
+#define OPT_PAUSE_MUS      "p      Pause music"
+#define OPT_VOL_UP         "+      Volume up"
+#define OPT_VOL_DOWN       "-      Volume down"
+#define OPT_OPEN_CELL      "[ENTER]/o Open cell"
+
+#define MSG_QUIT_MENU      "Press any key to quit the menu"
+#define MSG_CONT           "Press any key to continue"
+#define MSG_NEW_SCORE      "New score written to score log"
+#define MSG_WIN1           "You defused all the mines!"
+#define MSG_WIN2           "You won :)"
+#define MSG_LOSE1          "You hit a mine! (or tried to defuse the wrong cell)"
+#define MSG_LOSE2          "Game over :("
 
 #define CURSES_INIT()                                                  \
     initscr();                                                         \

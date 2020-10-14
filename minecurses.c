@@ -1,10 +1,11 @@
 #include <ctype.h>
-#include <ncurses.h>
 #include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ncurses.h>
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_mixer.h>
+
 #include "defs.h"
 
 struct Minecurses {
@@ -412,7 +413,7 @@ grid_print(const struct Minecurses *m)
     for (i = 1; i <= m->rows; i++) {
         wmove(m->gamewin, i, 1);
         for (j = 0; j < m->cols; j++)
-            wprintw(m->gamewin, "[ ]");
+            wprintw(m->gamewin, GRID_BOX);
     }
     wrefresh(m->gamewin);
 }
@@ -460,18 +461,18 @@ menu_options(void)
 void
 menu_fill(WINDOW *opts)
 {
-    mvwprintw(opts, 1, 1,  "q    Quit");
-    mvwprintw(opts, 2, 1,  "w/k  Move up");
-    mvwprintw(opts, 3, 1,  "s/j  Move down");
-    mvwprintw(opts, 4, 1,  "a/h  Move left");
-    mvwprintw(opts, 5, 1,  "d/l  Move right");
-    mvwprintw(opts, 6, 1,  "f    Flag cell");
-    mvwprintw(opts, 7, 1,  "g    Defuse (if flagged only)");
-    mvwprintw(opts, 8, 1,  "p    Pause music");
-    mvwprintw(opts, 9, 1,  "+    Volume up");
-    mvwprintw(opts, 10, 1, "-   Volume down");
-    mvwprintw(opts, 11, 1, "[ENTER]/o Open cell");
-    mvwprintw(opts, 13, 1, "Press any key to quit the menu");
+    mvwprintw(opts, 1, 1,  OPT_QUIT);
+    mvwprintw(opts, 2, 1,  OPT_MOVE_UP);
+    mvwprintw(opts, 3, 1,  OPT_MOVE_DOWN);
+    mvwprintw(opts, 4, 1,  OPT_MOVE_LEFT);
+    mvwprintw(opts, 5, 1,  OPT_MOVE_RIGHT);
+    mvwprintw(opts, 6, 1,  OPT_FLAG_CELL);
+    mvwprintw(opts, 7, 1,  OPT_DEFUSE);
+    mvwprintw(opts, 8, 1,  OPT_PAUSE_MUS);
+    mvwprintw(opts, 9, 1,  OPT_VOL_UP);
+    mvwprintw(opts, 10, 1, OPT_VOL_DOWN);
+    mvwprintw(opts, 11, 1, OPT_OPEN_CELL);
+    mvwprintw(opts, 13, 1, MSG_QUIT_MENU);
 }
 
 void
@@ -513,17 +514,15 @@ endscreen(const struct Minecurses *m, const enum State state)
     attron(A_BOLD);
     switch (state) {
         case GAME_WON:
-            mvprintw(YMID(stdscr)-2, XMID(stdscr)-11,
-                    "You defused all the mines!");
-            mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, "You won :)");
+            mvprintw(YMID(stdscr)-2, XMID(stdscr)-11, MSG_WIN1);
+            mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, MSG_WIN2);
             break;
         case GAME_LOST:
-            mvprintw(YMID(stdscr)-2, XMID(stdscr)-24,
-                    "You hit a mine! (or tried to defuse the wrong cell)");
-            mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, "Game over :(");
+            mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, MSG_LOSE1);
+            mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, MSG_LOSE2);
             break;
     }
-    mvprintw(YMID(stdscr), XMID(stdscr)-11, "Press any key to continue");
+    mvprintw(YMID(stdscr), XMID(stdscr)-11, MSG_CONT);
     refresh();
     attroff(A_BOLD);
 }
@@ -560,7 +559,7 @@ score_write(const struct Minecurses *m)
         fprintf(scorelog, "%s,%d,%dx%d\n",
                 playername, m->numdefused, m->cols, m->rows);
         clrtoeol();
-        mvprintw(0, 0, "New score written to score log");
+        mvprintw(0, 0, MSG_NEW_SCORE);
         refresh();
         getchar();
     }
@@ -605,11 +604,11 @@ audio_change_volume(char option)
 {
     static int volume = MIX_MAX_VOLUME;
     switch (option) {
-        case '+':
+        case MOVE_VOLUME_UP:
             if (volume == MIX_MAX_VOLUME) break;
             else Mix_VolumeMusic(volume += VOL_STEP);
             break;
-        case '-':
+        case MOVE_VOLUME_DOWN:
             if (volume == 0) break;
             else Mix_VolumeMusic(volume -= VOL_STEP);
             break;

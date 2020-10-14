@@ -26,7 +26,6 @@ Additional controls
 
 ## To Do
 
-* Add more error checks
 * Add colors
 * Add UTF-8 support
 * Fix wrong mine spawning bug
