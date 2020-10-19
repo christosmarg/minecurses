@@ -1,9 +1,9 @@
-Mine hit at position (5, 4)
+Last mine found at position (4, 1)
 
 Board overview
 
+- - 1 * 1 
+- - 1 1 1 
 - - - - - 
 - - - - - 
-- - - 1 1 
-- - - 1 d 
-- - - 1 1 
+- - - - - 

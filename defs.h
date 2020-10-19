@@ -1,3 +1,5 @@
+/* See LICENSE file for copyright and license details. */
+
 #ifndef DEFS_H
 #define DEFS_H
 
@@ -42,13 +44,20 @@
 #define MSG_LOSE1          "You hit a mine! (or tried to defuse the wrong cell)"
 #define MSG_LOSE2          "Game over :("
 
-#define CURSES_INIT()                                                  \
-    initscr();                                                         \
-    noecho();                                                          \
-    cbreak();
+#define CURSES_INIT() do {                                                 \
+        initscr();                                                         \
+        noecho();                                                          \
+        cbreak();                                                          \
+} while (0)
 
-#define AUDIO_PAUSE() do {                                             \
-    (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();   \
+#define MINEBOARD_INIT(m) do {                                             \
+        mineboard_mines_place(m);                                          \
+        mineboard_add_adj(m);                                              \
+        mineboard_spaces_fill(m);                                          \
+} while (0)
+
+#define AUDIO_PAUSE() do {                                                 \
+        (Mix_PausedMusic() == 1) ? Mix_ResumeMusic() : Mix_PauseMusic();   \
 } while (0)
 
 #define YMAX(x)                (getmaxy((x)))

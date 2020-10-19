@@ -29,7 +29,7 @@ Additional controls
 * Add colors
 * Add UTF-8 support
 * Fix wrong mine spawning bug
-* Fix flickering and cursor
+* Fix occasional flickering and cursor
 * Load score log to TUI
 
 ## Execution
@@ -48,6 +48,9 @@ $ make
 $ make run
 $ make clean # optional
 ```
+
+You can install it by running `sudo make install` - the binary will be installed
+in `/usr/local/bin/`.
 
 ### Windows
 
