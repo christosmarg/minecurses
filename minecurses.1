@@ -1,0 +1,54 @@
+.Dd minecurses\-VERSION
+.Dt MINECURSES 1
+.Os
+.Sh NAME
+.Nm minecurses
+.Nd a terminal minesweeper game
+.Sh SYNOPSIS
+.Nm
+.Sh DESCRIPTION
+.Nm
+starts a minesweeper game using the
+.Xr ncurses 3
+library to draw the TUI.
+.Xr pthread 3
+and
+.Xr SDL 3
+are used for simultaneous gameplay and sound.
+After each session
+.Nm
+writes a log file that stores the state of the last
+session. In case the player wins it writes their
+score to a CSV log.
+.Sh OPTIONS
+The following option are used during runtime in the TUI,
+not the command line.
+.Bl -tag -width 8n
+.It Sy q
+quit game
+.It Sy w/k
+move up on the Y axis
+.It Sy s/j
+move down on the Y axis
+.It Sy a/h
+move left on the X axis
+.It Sy d/l
+move right on the X axis
+.It Sy f
+flag cell
+.It Sy g
+defuse mine (if flagged only)
+.It Sy ENTER/o
+open cell
+.It Sy p
+pause music
+.It Sy +
+increase music volume
+.It Sy -
+decrease music volume
+.Sh SEE ALSO
+.Xr ncurses 3 ,
+.Xr SDL 3 ,
+.Xr pthread 3
+.Sh AUTHORS
+.An Christos Margiolis Aq Mt christos@christosmarg.xyz

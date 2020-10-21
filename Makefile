@@ -6,7 +6,7 @@ include config.mk
 
 BIN = minecurses
 DIST = ${BIN}-${VERSION}
-#MAN1 = ${BIN}.1
+MAN1 = ${BIN}.1
 
 SRC = minecurses.c
 OBJ = minecurses.o
@@ -37,17 +37,16 @@ run:
 	./${BIN}
 
 install: all
-	#${MKDIR} ${DESTDIR}${BIN_DIR} ${DESTDIR}${MAN_DIR}
-	${MKDIR} ${DESTDIR}${BIN_DIR}
+	${MKDIR} ${DESTDIR}${BIN_DIR} ${DESTDIR}${MAN_DIR}
 	${CP} ${BIN} ${BIN_DIR}
-	#${CP} ${MAN1} ${DESTDIR}${MAN_DIR}
-	#sed "s/VERSION/${VERSION}/g" < ${MAN1} > ${DESTDIR}${MAN_DIR}/${MAN1}
+	${CP} ${MAN1} ${DESTDIR}${MAN_DIR}
+	sed "s/VERSION/${VERSION}/g" < ${MAN1} > ${DESTDIR}${MAN_DIR}/${MAN1}
 	chmod 755 ${DESTDIR}${BIN_DIR}/${BIN}
-	#chmod 644 ${DESTDIR}${MAN_DIR}/${MAN1}
+	chmod 644 ${DESTDIR}${MAN_DIR}/${MAN1}
 
 uninstall:
 	${RM} ${DESTDIR}${BIN_DIR}/${BIN}
-	#${RM} ${DESTDIR}${MAN_DIR}/${MAN1}
+	${RM} ${DESTDIR}${MAN_DIR}/${MAN1}
 
 clean:
 	${RM} ${BIN} ${OBJ} ${DIST}.tar.gz
