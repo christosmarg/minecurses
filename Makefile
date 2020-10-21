@@ -2,32 +2,14 @@
 # minecurses - a terminal minesweeper game
 .POSIX:
 
-BIN = minecurses
-VERSION = 0.1
-DIST = ${BIN}-${VERSION}
-MAN1 = ${BIN}.1
-PREFIX = /usr/local
-MAN_DIR = ${PREFIX}/man/man1
-BIN_DIR = ${PREFIX}/bin
+include config.mk
 
-#EXT = c
-#SRC = ${wildcard *.${EXT}}
-#OBJ = ${SRC:%.${EXT}=%.o}
+BIN = minecurses
+DIST = ${BIN}-${VERSION}
+#MAN1 = ${BIN}.1
+
 SRC = minecurses.c
 OBJ = minecurses.o
-
-CC = gcc
-INCS = -Iinclude
-CPPFLAGS = -DVERSION=\"${VERSION}\"
-CFLAGS = -Wall -std=c99 -pedantic -O3 ${INCS} ${CPPFLAGS}
-LDFLAGS = -Llib -lncurses -lSDL2 -lSDL2_mixer -lpthread
-
-CP = cp -f
-RM = rm -f
-RM_DIR = rm -rf
-MKDIR = mkdir -p
-TAR = tar -cf
-GZIP = gzip
 
 all: options ${BIN}
 
@@ -40,12 +22,13 @@ options:
 ${BIN}: ${OBJ}
 	${CC} ${LDFLAGS} ${OBJ} -o $@
 
-${OBJ}: ${SRC} defs.h
+${OBJ}: ${SRC}
 	${CC} ${CFLAGS} -c ${SRC} -o $@
 
 dist: clean
 	${MKDIR} ${DIST}
-	${CP} -R ${SRC} defs.h LICENSE Makefile log res ${DIST}
+	${CP} -R log/ res/ config.mk defs.h LICENSE Makefile ${SRC} \
+		README.md ${DIST}
 	${TAR} ${DIST}.tar ${DIST}
 	${GZIP} ${DIST}.tar
 	${RM_DIR} ${DIST}

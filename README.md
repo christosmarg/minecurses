@@ -37,20 +37,18 @@ Additional controls
 ### UNIX-like operating systems
 
 **Dependencies**
-* `make`
 * `ncurses`
 * `SDL2`
 * `SDL2_mixer`
 
 ```shell
 $ cd path/to/minecurses
-$ make
-$ make run
+$ make && make run
 $ make clean # optional
 ```
 
-You can install it by running `sudo make install` - the binary will be installed
-in `/usr/local/bin/`.
+You can install `minecurses` by running `sudo make install clean`.
+The binary will be installed in `/usr/local/bin`.
 
 ### Windows
 

@@ -1,5 +1,7 @@
 /* See LICENSE file for copyright and license details. */
 
+#include <sys/types.h>
+
 #include <ctype.h>
 #include <pthread.h>
 #include <stdlib.h>
@@ -12,6 +14,7 @@
 #include "defs.h"
 
 struct Minecurses {
+        WINDOW *gamewin;
         char  **dispboard;
         char  **mineboard;
         int     rows, cols;
@@ -20,7 +23,6 @@ struct Minecurses {
         int     move;
         int     x, y;
         int     gameover;
-        WINDOW *gamewin;
 };
 
 enum State {
@@ -28,46 +30,46 @@ enum State {
         GAME_LOST
 };
 
-static void    game_init(struct Minecurses *);
-static void    game_reset(struct Minecurses *);
-static void    game_start(struct Minecurses *);
-static int     cols_set(void);
-static int     rows_set(void);
-static int     nummines_set(int);
-static void    dispboard_fill(struct Minecurses *);
-static void    mineboard_mines_place(struct Minecurses *);
-static void    mineboard_add_adj(struct Minecurses *);
-static uint8_t mineboard_count_adj(const struct Minecurses *, int, int);
-static void    mineboard_spaces_fill(struct Minecurses *);
-static void    boards_alloc(struct Minecurses *);
-static void    boards_dealloc(struct Minecurses *);
-static void    board_navigate(struct Minecurses *);
-static int     cell_open(struct Minecurses *);
-static void    cell_transfer(struct Minecurses *);
-static void    cell_reveal(const struct Minecurses *);
-static void    flags_handle(struct Minecurses *);
-static void    mine_defuse(struct Minecurses *);
-static void    mvget(struct Minecurses *, int *, int *);
-static void    mvup(int *);
-static void    mvdown(int *, int);
-static void    mvleft(int *);
-static void    mvright(int *, int);
-static void    board_print(const struct Minecurses *);
-static void    grid_print(const struct Minecurses *);
-static WINDOW *gamewin_init(int, int);
-static void    menu_handle(const struct Minecurses *);
-static void    menu_options(void);
-static void    menu_fill(struct _win_st *);
-static void    session_info(const struct Minecurses *);
-static void    win_handle(const struct Minecurses *);
-static void    gameover_handle(const struct Minecurses *);
-static void    endscreen(const struct Minecurses *, const enum State);
-static void    session_write(const struct Minecurses *);
-static void    score_write(const struct Minecurses *);
-static char   *playername_get(void);
-static void   *audio_play(void *);
-static void    audio_change_volume(char);
-static void    die(void);
+static void     game_init(struct Minecurses *);
+static void     game_reset(struct Minecurses *);
+static void     game_start(struct Minecurses *);
+static int      cols_set(void);
+static int      rows_set(void);
+static int      nummines_set(int);
+static void     dispboard_fill(struct Minecurses *);
+static void     mineboard_mines_place(struct Minecurses *);
+static void     mineboard_add_adj(struct Minecurses *);
+static u_int8_t mineboard_count_adj(const struct Minecurses *, int, int);
+static void     mineboard_spaces_fill(struct Minecurses *);
+static void     boards_alloc(struct Minecurses *);
+static void     boards_dealloc(struct Minecurses *);
+static void     board_navigate(struct Minecurses *);
+static int      cell_open(struct Minecurses *);
+static void     cell_transfer(struct Minecurses *);
+static void     cell_reveal(const struct Minecurses *);
+static void     flags_handle(struct Minecurses *);
+static void     mine_defuse(struct Minecurses *);
+static void     mvget(struct Minecurses *, int *, int *);
+static void     mvup(int *);
+static void     mvdown(int *, int);
+static void     mvleft(int *);
+static void     mvright(int *, int);
+static void     board_print(const struct Minecurses *);
+static void     grid_print(const struct Minecurses *);
+static WINDOW  *gamewin_init(int, int);
+static void     menu_handle(const struct Minecurses *);
+static void     menu_options(void);
+static void     menu_fill(struct _win_st *);
+static void     session_info(const struct Minecurses *);
+static void     win_handle(const struct Minecurses *);
+static void     gameover_handle(const struct Minecurses *);
+static void     endscreen(const struct Minecurses *, const enum State);
+static void     session_write(const struct Minecurses *);
+static void     score_write(const struct Minecurses *);
+static char    *playername_get(void);
+static void    *audio_play(void *);
+static void     audio_change_volume(char);
+static void     die(void);
 
 void
 game_init(struct Minecurses *m)
@@ -238,10 +240,10 @@ mineboard_add_adj(struct Minecurses *m)
 }
 
 // fix styling
-uint8_t
+u_int8_t
 mineboard_count_adj(const struct Minecurses *m, int r, int c)
 {
-        uint8_t nadj = 0;
+        u_int8_t nadj = 0;
 
         if (!OUT_OF_BOUNDS(m, r, c-1)   && m->mineboard[r][c-1]   == CELL_MINE) nadj++; // North
         if (!OUT_OF_BOUNDS(m, r, c+1)   && m->mineboard[r][c+1]   == CELL_MINE) nadj++; // South
@@ -283,11 +285,11 @@ boards_alloc(struct Minecurses *m)
 {
         size_t i = 0;
 
-        m->dispboard = (char **)malloc(m->rows * sizeof(char *));
-        m->mineboard = (char **)malloc(m->rows * sizeof(char *));
+        m->dispboard = malloc(m->rows * sizeof(char *));
+        m->mineboard = malloc(m->rows * sizeof(char *));
         for (; i < m->rows; i++) {
-                m->dispboard[i] = (char *)malloc(m->cols);
-                m->mineboard[i] = (char *)malloc(m->cols);
+                m->dispboard[i] = malloc(m->cols);
+                m->mineboard[i] = malloc(m->cols);
         }
         if (!m->dispboard || !m->mineboard)
                 die();
@@ -606,7 +608,7 @@ playername_get(void)
         scanw("%s", buffer);
         noecho();
         refresh();
-        playername = (char *)malloc(strlen(buffer) + 1);
+        playername = malloc(strlen(buffer) + 1);
         return (strcpy(playername, buffer));
 }
 
@@ -659,7 +661,7 @@ die(void)
 }
 
 int
-main(int argc, char **argv)
+main(int argc, char *argv[])
 {
 #ifndef NCURSES_VERSION
         fputs("ncurses is needed in order to run this program.\n", stderr);
