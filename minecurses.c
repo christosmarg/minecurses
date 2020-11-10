@@ -1,10 +1,8 @@
 /* See LICENSE file for copyright and license details. */
-#include <sys/types.h>
-
 #include <ctype.h>
-#include <pthread.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
 
 #include <ncurses.h>
 
@@ -28,7 +26,7 @@ static int       valset(int, const char *, int, int);
 static void      dispboardfill(Minecurses *);
 static void      minesplace(Minecurses *);
 static void      adjadd(Minecurses *);
-static u_int8_t  adjcount(const Minecurses *, int, int);
+static int       adjcount(const Minecurses *, int, int);
 static void      spacesfill(Minecurses *);
 static void      boardsalloc(Minecurses *);
 static void      boardsdealloc(Minecurses *);
@@ -57,7 +55,6 @@ void
 gamereset(Minecurses *m)
 {
         echo();
-
         m->cols = valset(4, MSG_COLS, 5, ARRSPACE_X(XMAX(stdscr)) - 2);
         m->rows = valset(3, MSG_ROWS, 5, ARRSPACE_Y(YMAX(stdscr)) - 3);
         m->nmines = valset(2, MSG_MINES, 1, m->rows * m->cols - 15);
@@ -173,11 +170,10 @@ adjadd(Minecurses *m)
                                 m->mineboard[i][j] = adjcount(m, i, j) + '0';
 }
 
-// fix styling
-u_int8_t
+int
 adjcount(const Minecurses *m, int r, int c)
 {
-        u_int8_t nadj = 0;
+        int nadj = 0;
 
         if (!OUT_OF_BOUNDS(m, r, c-1)   && m->mineboard[r][c-1]   == CELL_MINE) nadj++; // North
         if (!OUT_OF_BOUNDS(m, r, c+1)   && m->mineboard[r][c+1]   == CELL_MINE) nadj++; // South
@@ -388,7 +384,7 @@ menuopts(void)
         int w, h, wy, wx;
         WINDOW *opts;
 
-        w  = 33;
+        w = 33;
         h = 15;
         wy = CENTER(YMAX(stdscr), h);
         wx = CENTER(XMAX(stdscr), w);
@@ -419,10 +415,10 @@ menufill(WINDOW *opts)
 void
 sessioninfo(const Minecurses *m)
 {
-        mvprintw(0, 0, "Current position: (%d, %d) ", m->x, m->y);
-        mvprintw(0, XMID(stdscr) - strlen("Defused mines: x/x")/2,
-                 "Defused mines: %d/%d", m->ndefused, m->nmines);
-        mvprintw(0, XMAX(stdscr) - strlen("m Controls"), "m Controls");
+        mvprintw(0, 0, MSG_CURPOS, m->x, m->y);
+        mvprintw(0, XMID(stdscr) - (strlen(MSG_NDEFUSED) - 2) / 2,
+                 MSG_NDEFUSED, m->ndefused, m->nmines);
+        mvprintw(0, XMAX(stdscr) - strlen(OPT_CTRLS), OPT_CTRLS);
 }
 
 void

@@ -19,6 +19,7 @@
 #define VOL_STEP                10
 #define GRID_BOX                "[ ]"
 
+#define OPT_CTRLS               "m Controls"
 #define OPT_QUIT                "q      Quit"
 #define OPT_MOVE_UP             "w/k    Move up"
 #define OPT_MOVE_DOWN           "s/j    Move down"
@@ -36,7 +37,8 @@
 #define MSG_MINES               "Mines (Min = %d, Max = %d): "
 #define MSG_QUIT_MENU           "Press any key to quit the menu"
 #define MSG_CONT                "Press any key to continue"
-#define MSG_NEW_SCORE           "New score written to score log"
+#define MSG_CURPOS              "Current position: (%d, %d) "
+#define MSG_NDEFUSED            "Defused mines: %d/%d"
 #define MSG_WIN1                "You defused all the mines!"
 #define MSG_WIN2                "You won :)"
 #define MSG_LOSE1               "You hit a mine! (or tried to defuse the wrong cell)"

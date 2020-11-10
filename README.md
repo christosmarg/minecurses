@@ -1,4 +1,4 @@
-# minescurses
+# minecurses
 
 A minesweeper game using `ncurses`. The game was originally made as a
 university assignment of mine, but I decided to take it a bit further afterwards.
