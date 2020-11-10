@@ -1,5 +1,4 @@
 /* See LICENSE file for copyright and license details. */
-#include <ctype.h>
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
@@ -30,13 +29,10 @@ static int       adjcount(const Minecurses *, int, int);
 static void      spacesfill(Minecurses *);
 static void      boardsalloc(Minecurses *);
 static void      boardsdealloc(Minecurses *);
-static void      boardnav(Minecurses *);
 static int       cellopen(Minecurses *);
-static void      celltransfer(Minecurses *);
 static void      cellreveal(const Minecurses *);
 static void      flagshandle(Minecurses *);
 static void      minedefuse(Minecurses *);
-static void      mvget(Minecurses *, int *, int *);
 static void      mvup(int *);
 static void      mvdown(int *, int);
 static void      mvleft(int *);
@@ -58,8 +54,9 @@ gamereset(Minecurses *m)
         m->cols = valset(4, MSG_COLS, 5, ARRSPACE_X(XMAX(stdscr)) - 2);
         m->rows = valset(3, MSG_ROWS, 5, ARRSPACE_Y(YMAX(stdscr)) - 3);
         m->nmines = valset(2, MSG_MINES, 1, m->rows * m->cols - 15);
-        m->ndefused = m->x = m->y = 0;
-        m->gameover = FALSE;
+        m->x = m->y = 0;
+        m->ndefused = 0;
+        m->gameover = 0;
         noecho();
         menuopts();
         if (m->gamewin == NULL)
@@ -75,9 +72,7 @@ gamereset(Minecurses *m)
 void
 gamestart(Minecurses *m)
 {
-        bx = by = 0;
-        m->ndefused = 0;
-        m->gameover = FALSE;
+        static int y = 1, x = 2;
 
         do {
                 erase();
@@ -85,12 +80,33 @@ gamestart(Minecurses *m)
                 delwin(m->gamewin);
                 m->gamewin = gamewininit(m->rows, m->cols);
                 refresh();
-                boardprint(m);
-                sessioninfo(m);
-                boardnav(m);
 
-                switch (tolower((char)m->move)) {
-                case MOVE_ENTER:         /* FALLTHROUGH */
+                boardprint(m);
+
+                CURS_UPDATE(m, y, x);
+                bx = ARRSPACE_X(x);
+                by = ARRSPACE_Y(y);
+                sessioninfo(m);
+                refresh();
+
+                switch (m->move = wgetch(m->gamewin)) {
+                case MOVE_UP_NORM:      /* FALLTHROUGH */
+                case MOVE_UP_VIM:
+                        mvup(&y);
+                        break;
+                case MOVE_DOWN_NORM:    /* FALLTHROUGH */
+                case MOVE_DOWN_VIM:
+                        mvdown(&y, YMAX(m->gamewin));
+                        break;
+                case MOVE_LEFT_NORM:    /* FALLTHROUGH */
+                case MOVE_LEFT_VIM:
+                        mvleft(&x);
+                        break;
+                case MOVE_RIGHT_NORM:   /* FALLTHROUGH */
+                case MOVE_RIGHT_VIM:
+                        mvright(&x, XMAX(m->gamewin));
+                        break;
+                case MOVE_ENTER:        /* FALLTHROUGH */
                 case MOVE_OPEN_CELL:
                         m->gameover = cellopen(m);
                         break;
@@ -98,13 +114,10 @@ gamestart(Minecurses *m)
                         flagshandle(m);
                         break;
                 case MOVE_DEFUSE_CELL:
-                        if (m->dispboard[by][bx] == CELL_FLAGGED
-                        &&  m->mineboard[by][bx] == CELL_MINE) {
-                                m->ndefused++;
+                        if (IS_FLAGGED(m, by, bx) &&  IS_MINE(m, by, bx))
                                 minedefuse(m);
-                        } else if (m->dispboard[by][bx] == CELL_FLAGGED
-                               &&  m->mineboard[by][bx] != CELL_MINE)
-                                m->gameover = TRUE;              
+                        else if (IS_FLAGGED(m, by, bx) && !IS_MINE(m, by, bx))
+                                m->gameover = 1;              
                         break;
                 case MOVE_OPEN_MENU:
                         menuhandle(m);
@@ -116,7 +129,7 @@ gamestart(Minecurses *m)
         } while (!OUT_OF_BOUNDS(m, by, bx)
               && m->ndefused < m->nmines
               && !m->gameover
-              && tolower((char)m->move) != MOVE_QUIT);
+              && m->move != MOVE_QUIT);
 
         if (m->gameover)
                 endscreen(m, GAME_LOST);
@@ -143,16 +156,16 @@ dispboardfill(Minecurses *m)
 
         for (i = 0; i < m->rows; i++)
                 for (j = 0; j < m->cols; j++)
-                    m->dispboard[i][j] = CELL_BLANK;
+                        m->dispboard[i][j] = CELL_BLANK;
 }
 
 void
 minesplace(Minecurses *m)
 {
-        size_t i, r, c;
+        size_t i = 0, r, c;
 
         srand(time(NULL));
-        for (i = 0; i < m->nmines; i++) {
+        for (; i < m->nmines; i++) {
                 r = rand() % m->rows;
                 c = rand() % m->cols;
                 m->mineboard[r][c] = CELL_MINE;
@@ -175,14 +188,15 @@ adjcount(const Minecurses *m, int r, int c)
 {
         int nadj = 0;
 
-        if (!OUT_OF_BOUNDS(m, r, c-1)   && m->mineboard[r][c-1]   == CELL_MINE) nadj++; // North
-        if (!OUT_OF_BOUNDS(m, r, c+1)   && m->mineboard[r][c+1]   == CELL_MINE) nadj++; // South
-        if (!OUT_OF_BOUNDS(m, r+1, c)   && m->mineboard[r+1][c]   == CELL_MINE) nadj++; // East
-        if (!OUT_OF_BOUNDS(m, r-1, c)   && m->mineboard[r-1][c]   == CELL_MINE) nadj++; // West
-        if (!OUT_OF_BOUNDS(m, r+1, c-1) && m->mineboard[r+1][c-1] == CELL_MINE) nadj++; // North-East
-        if (!OUT_OF_BOUNDS(m, r-1, c-1) && m->mineboard[r-1][c-1] == CELL_MINE) nadj++; // North-West
-        if (!OUT_OF_BOUNDS(m, r+1, c+1) && m->mineboard[r+1][c+1] == CELL_MINE) nadj++; // South-East
-        if (!OUT_OF_BOUNDS(m, r-1, c+1) && m->mineboard[r-1][c+1] == CELL_MINE) nadj++; // South-West
+        if (!OUT_OF_BOUNDS(m, r, c-1)   && IS_MINE(m, r, c-1))   nadj++; // North
+        if (!OUT_OF_BOUNDS(m, r, c+1)   && IS_MINE(m, r, c+1))   nadj++; // South
+        if (!OUT_OF_BOUNDS(m, r+1, c)   && IS_MINE(m, r+1, c))   nadj++; // East
+        if (!OUT_OF_BOUNDS(m, r-1, c)   && IS_MINE(m, r-1, c))   nadj++; // West
+        if (!OUT_OF_BOUNDS(m, r+1, c-1) && IS_MINE(m, r+1, c-1)) nadj++; // North-East
+        if (!OUT_OF_BOUNDS(m, r-1, c-1) && IS_MINE(m, r-1, c-1)) nadj++; // North-West
+        if (!OUT_OF_BOUNDS(m, r+1, c+1) && IS_MINE(m, r+1, c+1)) nadj++; // South-East
+        if (!OUT_OF_BOUNDS(m, r-1, c+1) && IS_MINE(m, r-1, c+1)) nadj++; // South-West
+
         return nadj;
 }
 
@@ -195,18 +209,6 @@ spacesfill(Minecurses *m)
                 for (j = 0; j < m->cols; j++)
                         if (!IS_MINE(m, i, j) &&  m->mineboard[i][j] == '0')
                                 m->mineboard[i][j] = '-';
-}
-
-void
-boardnav(Minecurses *m)
-{
-        static int y = 1, x = 2;
-
-        CURS_UPDATE(m, y, x);
-        m->x = ARRSPACE_X(x);
-        m->y = ARRSPACE_Y(y);
-        refresh();
-        mvget(m, &y, &x);
 }
 
 void
@@ -240,15 +242,9 @@ boardsdealloc(Minecurses *m)
 int
 cellopen(Minecurses *m)
 {
-        celltransfer(m);
-        cellreveal(m);
-        return (m->dispboard[by][bx] == CELL_MINE);
-}
-
-void
-celltransfer(Minecurses *m)
-{
         m->dispboard[by][bx] = m->mineboard[by][bx];
+        cellreveal(m);
+        return IS_MINE(m, by, bx);
 }
 
 void
@@ -263,10 +259,9 @@ cellreveal(const Minecurses *m)
 void
 flagshandle(Minecurses *m)
 {
-        if (m->dispboard[by][bx] == CELL_FLAGGED)
+        if (IS_FLAGGED(m, by, bx))
                 m->dispboard[by][bx] = CELL_BLANK;
-        else if (m->dispboard[by][bx] != CELL_FLAGGED
-             &&  m->dispboard[by][bx] != CELL_BLANK)
+        else if (!IS_FLAGGED(m, by, bx) && !IS_BLANK(m, by, bx))
                 return;
         else
                 m->dispboard[by][bx] = CELL_FLAGGED;
@@ -276,35 +271,13 @@ flagshandle(Minecurses *m)
 void
 minedefuse(Minecurses *m)
 {
+        m->ndefused++;
         m->dispboard[by][bx] = m->mineboard[by][bx] = MINE_DEFUSED;
         cellreveal(m);
 }
 
 #undef bx
 #undef by
-
-void
-mvget(Minecurses *m, int *y, int *x)
-{
-        switch (m->move = wgetch(m->gamewin)) {
-        case 'k': case 'K': /* FALLTHROUGH */
-        case 'w': case 'W':
-                mvup(y);
-                break;
-        case 'j': case 'J': /* FALLTHROUGH */
-        case 's': case 'S':
-                mvdown(y, YMAX(m->gamewin));
-                break;
-        case 'h': case 'H': /* FALLTHROUGH */
-        case 'a': case 'A':
-                mvleft(x);
-                break;
-        case 'l': case 'L': /* FALLTHROUGH */
-        case 'd': case 'D':
-                mvright(x, XMAX(m->gamewin));
-                break;
-        }
-}
 
 void
 mvup(int *y)
@@ -427,12 +400,12 @@ endscreen(const Minecurses *m, int state)
         attron(A_BOLD);
         switch (state) {
         case GAME_WON:
-                mvprintw(YMID(stdscr)-2, XMID(stdscr)-11, MSG_WIN1);
-                mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, MSG_WIN2);
+                mvprintw(YMID(stdscr)-2, XMID(stdscr)-11, MSG_WIN_1);
+                mvprintw(YMID(stdscr)-1, XMID(stdscr)-3, MSG_WIN_2);
                 break;
         case GAME_LOST:
-                mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, MSG_LOSE1);
-                mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, MSG_LOSE2);
+                mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, MSG_LOSE_1);
+                mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, MSG_LOSE_2);
                 break;
         }
         mvprintw(YMID(stdscr), XMID(stdscr)-11, MSG_CONT);
