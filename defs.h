@@ -6,9 +6,6 @@
 #define MOVE_OPEN_CELL          'o'
 #define MOVE_FLAG_CELL          'f'
 #define MOVE_DEFUSE_CELL        'g'
-#define MOVE_PAUSE_AUDIO        'p'
-#define MOVE_VOLUME_UP          '+'
-#define MOVE_VOLUME_DOWN        '-'
 #define MOVE_OPEN_MENU          'm'
 #define MOVE_RESTART            'r'
 #define MOVE_QUIT               'q'
@@ -16,20 +13,17 @@
 #define CELL_FLAGGED            'F'
 #define CELL_BLANK              ' '
 #define CELL_MINE               '*'
-#define VOL_STEP                10
 #define GRID_BOX                "[ ]"
 
 #define OPT_CTRLS               "m Controls"
-#define OPT_QUIT                "q      Quit"
-#define OPT_MOVE_UP             "w/k    Move up"
-#define OPT_MOVE_DOWN           "s/j    Move down"
-#define OPT_MOVE_LEFT           "a/h    Move left"
-#define OPT_MOVE_RIGHT          "d/l    Move right"
-#define OPT_FLAG_CELL           "f      Flag cell"
-#define OPT_DEFUSE              "g      Defuse (if flagged only)"
-#define OPT_PAUSE_MUS           "p      Pause music"
-#define OPT_VOL_UP              "+      Volume up"
-#define OPT_VOL_DOWN            "-      Volume down"
+#define OPT_QUIT                "q         Quit"
+#define OPT_RESTART             "r         Restart"
+#define OPT_MOVE_UP             "w/k       Move up"
+#define OPT_MOVE_DOWN           "s/j       Move down"
+#define OPT_MOVE_LEFT           "a/h       Move left"
+#define OPT_MOVE_RIGHT          "d/l       Move right"
+#define OPT_FLAG_CELL           "f         Flag cell"
+#define OPT_DEFUSE              "g         Defuse (if flagged only)"
 #define OPT_OPEN_CELL           "[ENTER]/o Open cell"
 
 #define MSG_COLS                "Columns (Min = %d, Max = %d): "

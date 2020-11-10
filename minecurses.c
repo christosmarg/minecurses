@@ -384,8 +384,8 @@ menuopts(void)
         int w, h, wy, wx;
         WINDOW *opts;
 
-        w = 33;
-        h = 15;
+        w = 36;
+        h = 13;
         wy = CENTER(YMAX(stdscr), h);
         wx = CENTER(XMAX(stdscr), w);
         opts = newwin(h, w, wy, wx);
@@ -398,18 +398,16 @@ menuopts(void)
 void
 menufill(WINDOW *opts)
 {
-        mvwprintw(opts, 1, 1,  OPT_QUIT);
-        mvwprintw(opts, 2, 1,  OPT_MOVE_UP);
-        mvwprintw(opts, 3, 1,  OPT_MOVE_DOWN);
-        mvwprintw(opts, 4, 1,  OPT_MOVE_LEFT);
-        mvwprintw(opts, 5, 1,  OPT_MOVE_RIGHT);
-        mvwprintw(opts, 6, 1,  OPT_FLAG_CELL);
-        mvwprintw(opts, 7, 1,  OPT_DEFUSE);
-        mvwprintw(opts, 8, 1,  OPT_PAUSE_MUS);
-        mvwprintw(opts, 9, 1,  OPT_VOL_UP);
-        mvwprintw(opts, 10, 1, OPT_VOL_DOWN);
-        mvwprintw(opts, 11, 1, OPT_OPEN_CELL);
-        mvwprintw(opts, 13, 1, MSG_QUIT_MENU);
+        mvwprintw(opts, 1, 1, OPT_QUIT);
+        mvwprintw(opts, 2, 1, OPT_RESTART);
+        mvwprintw(opts, 3, 1, OPT_MOVE_UP);
+        mvwprintw(opts, 4, 1, OPT_MOVE_DOWN);
+        mvwprintw(opts, 5, 1, OPT_MOVE_LEFT);
+        mvwprintw(opts, 6, 1, OPT_MOVE_RIGHT);
+        mvwprintw(opts, 7, 1, OPT_FLAG_CELL);
+        mvwprintw(opts, 8, 1, OPT_DEFUSE);
+        mvwprintw(opts, 9, 1, OPT_OPEN_CELL);
+        mvwprintw(opts, 11, 1, MSG_QUIT_MENU);
 }
 
 void
