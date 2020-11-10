@@ -6,10 +6,11 @@ include config.mk
 
 BIN = minecurses
 DIST = ${BIN}-${VERSION}
-MAN1 = ${BIN}.1
+MAN6 = ${BIN}.6
 
+EXT = c
 SRC = minecurses.c
-OBJ = minecurses.o
+OBJ = ${SRC:.${EXT}=.o}
 
 all: options ${BIN}
 
@@ -22,12 +23,12 @@ options:
 ${BIN}: ${OBJ}
 	${CC} ${LDFLAGS} ${OBJ} -o $@
 
-${OBJ}: ${SRC}
-	${CC} ${CFLAGS} -c ${SRC} -o $@
+.${EXT}.o:
+	${CC} -c ${CFLAGS} $<
 
 dist: clean
 	${MKDIR} ${DIST}
-	${CP} -R log/ res/ config.mk defs.h LICENSE Makefile ${SRC} \
+	${CP} -R log/ res/ config.mk defs.h LICENSE Makefile ${MAN} ${SRC} \
 		README.md ${DIST}
 	${TAR} ${DIST}.tar ${DIST}
 	${GZIP} ${DIST}.tar
@@ -39,14 +40,14 @@ run:
 install: all
 	${MKDIR} ${DESTDIR}${BIN_DIR} ${DESTDIR}${MAN_DIR}
 	${CP} ${BIN} ${BIN_DIR}
-	${CP} ${MAN1} ${DESTDIR}${MAN_DIR}
-	sed "s/VERSION/${VERSION}/g" < ${MAN1} > ${DESTDIR}${MAN_DIR}/${MAN1}
+	${CP} ${MAN6} ${DESTDIR}${MAN_DIR}
+	sed "s/VERSION/${VERSION}/g" < ${MAN6} > ${DESTDIR}${MAN_DIR}/${MAN6}
 	chmod 755 ${DESTDIR}${BIN_DIR}/${BIN}
-	chmod 644 ${DESTDIR}${MAN_DIR}/${MAN1}
+	chmod 644 ${DESTDIR}${MAN_DIR}/${MAN6}
 
 uninstall:
 	${RM} ${DESTDIR}${BIN_DIR}/${BIN}
-	${RM} ${DESTDIR}${MAN_DIR}/${MAN1}
+	${RM} ${DESTDIR}${MAN_DIR}/${MAN6}
 
 clean:
 	${RM} ${BIN} ${OBJ} ${DIST}.tar.gz

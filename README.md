@@ -1,6 +1,7 @@
 # minescurses
 
-A minesweeper game using the `ncurses` and `SDL2` libraries. The game was originally made as a university assignment of mine, but I decided to take it a bit further afterwards.
+A minesweeper game using `ncurses`. The game was originally made as a
+university assignment of mine, but I decided to take it a bit further afterwards.
 
 ## How to play
 
@@ -19,18 +20,14 @@ The objective is to simply find and defuse all the mines.
 Additional controls
 
 * `m`: Open control menu
-* `p`: Pause audio
-* `+`: Volume up
-* `-`: Volume down
+* `r`: Restart the game
 * `q`: Quit
 
 ## To Do
 
 * Add colors
-* Add UTF-8 support
 * Fix wrong mine spawning bug
 * Fix occasional flickering and cursor
-* Load score log to TUI
 
 ## Execution
 
@@ -38,8 +35,6 @@ Additional controls
 
 **Dependencies**
 * `ncurses`
-* `SDL2`
-* `SDL2_mixer`
 
 ```shell
 $ cd path/to/minecurses
