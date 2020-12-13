@@ -13,7 +13,7 @@ LIBS = -Llib -lncurses
 
 # flags
 CPPFLAGS = -D_DEFAULT_SOURCE -D_BSD_SOURCE -D_POSIX_C_SOURCE=200809L \
-	   -DVERSION=\"${VERSION}\"
+	   -D_XOPEN_SOURCE=600 -DVERSION=\"${VERSION}\"
 CFLAGS = -std=c99 -pedantic -Wall -Wno-deprecated-declarations \
 	 -O3 ${INCS} ${CPPFLAGS}
 LDFLAGS = ${LIBS}

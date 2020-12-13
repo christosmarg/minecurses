@@ -18,7 +18,7 @@
 #define MOVE_RESTART            'r'
 #define MOVE_QUIT               'q'
 
-#define MINE_DEFUSED            'd'
+#define MINE_DEFUSED            'D'
 #define CELL_FLAGGED            'F'
 #define CELL_BLANK              ' '
 #define CELL_MINE               '*'
@@ -50,29 +50,12 @@
 #define GAME_LOST               0
 #define GAME_WON                1
 
-#define CURSES_INIT() do {      \
-        initscr();              \
-        noecho();               \
-        cbreak();               \
-} while (0)
-
-#define MINEBOARD_INIT(m) do {  \
-        minesplace(m);          \
-        adjadd(m);              \
-        spacesfill(m);          \
-} while (0)
-
-#define GAME_RESTART(m) do {    \
-        boardsdealloc(m);       \
-        gamereset(m);           \
-} while (0)
-
 #define YMAX(x)                 (getmaxy((x)))
 #define XMAX(x)                 (getmaxx((x)))
 #define YMID(x)                 (getmaxy((x)) / 2)
 #define XMID(x)                 (getmaxx((x)) / 2)
-#define GRIDSPACE_X(x)          ((x) * 3 + 2)
-#define GRIDSPACE_Y(y)          ((y) + 2)
+#define SCRSPACE_X(x)           ((x) * 3 + 2)
+#define SCRSPACE_Y(y)           ((y) + 2)
 #define ARRSPACE_X(x)           (((x) - 2) / 3)
 #define ARRSPACE_Y(y)           ((y) - 1)
 #define CENTER(x, y)            ((x) / 2 - (y) / 2)

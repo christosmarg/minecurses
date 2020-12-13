@@ -11,45 +11,34 @@ typedef struct {
         WINDOW   *gamewin;
         char    **dispboard;
         char    **mineboard;
-        int       rows, cols;
+        int       rows;
+        int       cols;
         int       nmines;
         int       ndefused;
         int       move;
-        int       x, y;
+        int       x;
+        int       y;
         int       gameover;
 } Minecurses;
 
 static void      gamereset(Minecurses *);
+static void      gamerestart(Minecurses *);
 static void      gamestart(Minecurses *);
 static int       valset(int, const char *, int, int);
-static void      dispboardfill(Minecurses *);
-static void      minesplace(Minecurses *);
-static void      adjadd(Minecurses *);
 static int       adjcount(const Minecurses *, int, int);
-static void      spacesfill(Minecurses *);
-static void      boardsalloc(Minecurses *);
 static void      boardsdealloc(Minecurses *);
-static int       cellopen(Minecurses *);
 static void      cellreveal(const Minecurses *);
-static void      flagshandle(Minecurses *);
-static void      minedefuse(Minecurses *);
-static void      mvup(int *);
-static void      mvdown(int *, int);
-static void      mvleft(int *);
-static void      mvright(int *, int);
 static void      boardprint(const Minecurses *);
 static WINDOW   *gamewininit(int, int);
-static void      menuhandle(const Minecurses *);
 static void      menuopts(void);
-static void      menufill(WINDOW *);
-static void      sessioninfo(const Minecurses *);
-static void      endscreen(const Minecurses *, int);
-static void      cleanup(Minecurses *);
+static void      endscreen(Minecurses *, int);
 static void     *emalloc(size_t);
 
-void
+static void
 gamereset(Minecurses *m)
 {
+        size_t i, j, r, c;
+
         echo();
         m->cols = valset(4, MSG_COLS, 5, ARRSPACE_X(XMAX(stdscr)) - 2);
         m->rows = valset(3, MSG_ROWS, 5, ARRSPACE_Y(YMAX(stdscr)) - 3);
@@ -58,86 +47,155 @@ gamereset(Minecurses *m)
         m->ndefused = 0;
         m->gameover = 0;
         noecho();
+
         menuopts();
         if (m->gamewin == NULL)
                 m->gamewin = gamewininit(m->rows, m->cols);
-        boardsalloc(m);
-        dispboardfill(m);
-        MINEBOARD_INIT(m);
+
+        /* allocate memory for the boards */
+        m->dispboard = emalloc(m->rows * sizeof(char *));
+        m->mineboard = emalloc(m->rows * sizeof(char *));
+        for (i = 0; i < m->rows; i++) {
+                m->dispboard[i] = emalloc(m->cols);
+                m->mineboard[i] = emalloc(m->cols);
+        }
+
+        /* place mines */
+        srand(time(NULL));
+        for (i = 0; i < m->nmines; i++) {
+                r = rand() % m->rows;
+                c = rand() % m->cols;
+                m->mineboard[r][c] = CELL_MINE;
+        }
+
+        /* TODO: do it in one loop */
+        /* add numbers */
+        for (i = 0; i < m->rows; i++) {
+                for (j = 0; j < m->cols; j++) {
+                        if (!IS_MINE(m, i, j))
+                                m->mineboard[i][j] = adjcount(m, i, j) + '0';
+                        /* in the meantime, initialize dispboard */
+                        m->dispboard[i][j] = CELL_BLANK;
+                }
+        }
+
+        /* fill spaces */
+        for (i = 0; i < m->rows; i++)
+                for (j = 0; j < m->cols; j++)
+                        if (!IS_MINE(m, i, j) &&  m->mineboard[i][j] == '0')
+                                m->mineboard[i][j] = '-';
+}
+
+static void
+gamerestart(Minecurses *m)
+{
+        boardsdealloc(m);
+        gamereset(m);
 }
 
 #define bx m->x
 #define by m->y
 
-void
+static void
 gamestart(Minecurses *m)
 {
         static int y = 1, x = 2;
 
-        do {
+        for (;;) {
                 erase();
                 // is this necessary?
                 delwin(m->gamewin);
                 m->gamewin = gamewininit(m->rows, m->cols);
                 refresh();
-
                 boardprint(m);
 
                 CURS_UPDATE(m, y, x);
                 bx = ARRSPACE_X(x);
                 by = ARRSPACE_Y(y);
-                sessioninfo(m);
+
+                /* session info */
+                mvprintw(0, 0, MSG_CURPOS, bx, by);
+                mvprintw(0, XMID(stdscr) - (strlen(MSG_NDEFUSED) - 2) / 2,
+                         MSG_NDEFUSED, m->ndefused, m->nmines);
+                mvprintw(0, XMAX(stdscr) - strlen(OPT_CTRLS), OPT_CTRLS);
+
                 refresh();
 
+                /* handle moves */
                 switch (m->move = wgetch(m->gamewin)) {
                 case MOVE_UP_NORM:      /* FALLTHROUGH */
                 case MOVE_UP_VIM:
-                        mvup(&y);
+                        if (--y < 1)
+                                y = 1;
                         break;
                 case MOVE_DOWN_NORM:    /* FALLTHROUGH */
                 case MOVE_DOWN_VIM:
-                        mvdown(&y, YMAX(m->gamewin));
+                        if (++y > XMAX(m->gamewin) - 2)
+                                y = YMAX(m->gamewin) - 2;
                         break;
                 case MOVE_LEFT_NORM:    /* FALLTHROUGH */
                 case MOVE_LEFT_VIM:
-                        mvleft(&x);
+                        x -= 3;
+                        if (x < 2)
+                                x = 2;
                         break;
                 case MOVE_RIGHT_NORM:   /* FALLTHROUGH */
                 case MOVE_RIGHT_VIM:
-                        mvright(&x, XMAX(m->gamewin));
+                        x += 3;
+                        if (x > XMAX(m->gamewin) - 3)
+                                x = XMAX(m->gamewin) - 3;
                         break;
                 case MOVE_ENTER:        /* FALLTHROUGH */
                 case MOVE_OPEN_CELL:
-                        m->gameover = cellopen(m);
+                        m->dispboard[by][bx] = m->mineboard[by][bx];
+                        m->gameover = IS_MINE(m, by, bx);
+                        cellreveal(m);
                         break;
                 case MOVE_FLAG_CELL:
-                        flagshandle(m);
+                        if (IS_FLAGGED(m, by, bx))
+                                m->dispboard[by][bx] = CELL_BLANK;
+                        else if (!IS_FLAGGED(m, by, bx) && !IS_BLANK(m, by, bx))
+                                break;
+                        else
+                                m->dispboard[by][bx] = CELL_FLAGGED;
+                        cellreveal(m);
                         break;
                 case MOVE_DEFUSE_CELL:
-                        if (IS_FLAGGED(m, by, bx) &&  IS_MINE(m, by, bx))
-                                minedefuse(m);
-                        else if (IS_FLAGGED(m, by, bx) && !IS_MINE(m, by, bx))
+                        if (IS_FLAGGED(m, by, bx) &&  IS_MINE(m, by, bx)) {
+                                m->ndefused++;
+                                m->dispboard[by][bx] = MINE_DEFUSED;
+                                m->mineboard[by][bx] = MINE_DEFUSED;
+                                cellreveal(m);
+                        } else if (IS_FLAGGED(m, by, bx) && !IS_MINE(m, by, bx))
                                 m->gameover = 1;              
                         break;
                 case MOVE_OPEN_MENU:
-                        menuhandle(m);
+                        menuopts();
+                        box(m->gamewin, 0, 0);
+                        boardprint(m);
                         break;
                 case MOVE_RESTART:
-                        GAME_RESTART(m);
+                        gamerestart(m);
                         break;
                 }
-        } while (!OUT_OF_BOUNDS(m, by, bx)
-              && m->ndefused < m->nmines
-              && !m->gameover
-              && m->move != MOVE_QUIT);
+
+                if (OUT_OF_BOUNDS(m, by, bx)
+                ||  m->ndefused > m->nmines
+                ||  m->gameover
+                ||  m->move == MOVE_QUIT)
+                        break;
+        }
 
         if (m->gameover)
                 endscreen(m, GAME_LOST);
-        if (m->ndefused == m->nmines)
+        else if (m->ndefused == m->nmines)
                 endscreen(m, GAME_WON);
 }
 
-int
+#undef bx
+#undef by
+
+static int
 valset(int offy, const char *msg, int min, int max)
 {
         int val;
@@ -149,82 +207,24 @@ valset(int offy, const char *msg, int min, int max)
         return val;
 }
 
-void
-dispboardfill(Minecurses *m)
-{
-        size_t i, j;
-
-        for (i = 0; i < m->rows; i++)
-                for (j = 0; j < m->cols; j++)
-                        m->dispboard[i][j] = CELL_BLANK;
-}
-
-void
-minesplace(Minecurses *m)
-{
-        size_t i = 0, r, c;
-
-        srand(time(NULL));
-        for (; i < m->nmines; i++) {
-                r = rand() % m->rows;
-                c = rand() % m->cols;
-                m->mineboard[r][c] = CELL_MINE;
-        }
-}
-
-void
-adjadd(Minecurses *m)
-{
-        size_t i, j;
-
-        for (i = 0; i < m->rows; i++)
-                for (j = 0; j < m->cols; j++)
-                        if (!IS_MINE(m, i, j))
-                                m->mineboard[i][j] = adjcount(m, i, j) + '0';
-}
-
-int
+static int
 adjcount(const Minecurses *m, int r, int c)
 {
         int nadj = 0;
 
-        if (!OUT_OF_BOUNDS(m, r, c-1)   && IS_MINE(m, r, c-1))   nadj++; // North
-        if (!OUT_OF_BOUNDS(m, r, c+1)   && IS_MINE(m, r, c+1))   nadj++; // South
-        if (!OUT_OF_BOUNDS(m, r+1, c)   && IS_MINE(m, r+1, c))   nadj++; // East
-        if (!OUT_OF_BOUNDS(m, r-1, c)   && IS_MINE(m, r-1, c))   nadj++; // West
-        if (!OUT_OF_BOUNDS(m, r+1, c-1) && IS_MINE(m, r+1, c-1)) nadj++; // North-East
-        if (!OUT_OF_BOUNDS(m, r-1, c-1) && IS_MINE(m, r-1, c-1)) nadj++; // North-West
-        if (!OUT_OF_BOUNDS(m, r+1, c+1) && IS_MINE(m, r+1, c+1)) nadj++; // South-East
-        if (!OUT_OF_BOUNDS(m, r-1, c+1) && IS_MINE(m, r-1, c+1)) nadj++; // South-West
+        if (!OUT_OF_BOUNDS(m, r, c-1)   && IS_MINE(m, r, c-1))   nadj++; // north
+        if (!OUT_OF_BOUNDS(m, r, c+1)   && IS_MINE(m, r, c+1))   nadj++; // south
+        if (!OUT_OF_BOUNDS(m, r+1, c)   && IS_MINE(m, r+1, c))   nadj++; // east
+        if (!OUT_OF_BOUNDS(m, r-1, c)   && IS_MINE(m, r-1, c))   nadj++; // west
+        if (!OUT_OF_BOUNDS(m, r+1, c-1) && IS_MINE(m, r+1, c-1)) nadj++; // north-east
+        if (!OUT_OF_BOUNDS(m, r-1, c-1) && IS_MINE(m, r-1, c-1)) nadj++; // north-west
+        if (!OUT_OF_BOUNDS(m, r+1, c+1) && IS_MINE(m, r+1, c+1)) nadj++; // south-east
+        if (!OUT_OF_BOUNDS(m, r-1, c+1) && IS_MINE(m, r-1, c+1)) nadj++; // south-west
 
         return nadj;
 }
 
-void
-spacesfill(Minecurses *m)
-{
-        size_t i, j;
-
-        for (i = 0; i < m->rows; i++)
-                for (j = 0; j < m->cols; j++)
-                        if (!IS_MINE(m, i, j) &&  m->mineboard[i][j] == '0')
-                                m->mineboard[i][j] = '-';
-}
-
-void
-boardsalloc(Minecurses *m)
-{
-        size_t i = 0;
-
-        m->dispboard = emalloc(m->rows * sizeof(char *));
-        m->mineboard = emalloc(m->rows * sizeof(char *));
-        for (; i < m->rows; i++) {
-                m->dispboard[i] = emalloc(m->cols);
-                m->mineboard[i] = emalloc(m->cols);
-        }
-}
-
-void
+static void
 boardsdealloc(Minecurses *m)
 {
         size_t i = 0;
@@ -239,77 +239,16 @@ boardsdealloc(Minecurses *m)
         }
 }
 
-int
-cellopen(Minecurses *m)
-{
-        m->dispboard[by][bx] = m->mineboard[by][bx];
-        cellreveal(m);
-        return IS_MINE(m, by, bx);
-}
-
-void
+static void
 cellreveal(const Minecurses *m)
 {
         int y = m->y + 1;
-        int x = GRIDSPACE_X(m->x);
+        int x = SCRSPACE_X(m->x);
 
-        mvwaddch(m->gamewin, y, x, m->dispboard[by][bx]);
+        mvwaddch(m->gamewin, y, x, m->dispboard[m->y][m->x]);
 }
 
-void
-flagshandle(Minecurses *m)
-{
-        if (IS_FLAGGED(m, by, bx))
-                m->dispboard[by][bx] = CELL_BLANK;
-        else if (!IS_FLAGGED(m, by, bx) && !IS_BLANK(m, by, bx))
-                return;
-        else
-                m->dispboard[by][bx] = CELL_FLAGGED;
-        cellreveal(m);
-}
-
-void
-minedefuse(Minecurses *m)
-{
-        m->ndefused++;
-        m->dispboard[by][bx] = m->mineboard[by][bx] = MINE_DEFUSED;
-        cellreveal(m);
-}
-
-#undef bx
-#undef by
-
-void
-mvup(int *y)
-{
-        if (--(*y) < 1)
-                *y = 1;
-}
-
-void
-mvdown(int *y, int ymax)
-{
-        if (++(*y) > ymax-2)
-                *y = ymax-2;
-}
-
-void
-mvleft(int *x)
-{
-        *x -= 3;
-        if (*x < 2)
-                *x = 2;
-}
-
-void
-mvright(int *x, int xmax)
-{
-        *x += 3;
-        if (*x > xmax-3)
-                *x = xmax-3;
-}
-
-void
+static void
 boardprint(const Minecurses *m)
 {    
         size_t i, j, x, y;
@@ -320,42 +259,36 @@ boardprint(const Minecurses *m)
                 for (j = 0; j < m->cols; j++)
                         wprintw(m->gamewin, GRID_BOX);
         }
+
         wattron(m->gamewin, A_BOLD);
         for (i = 0, y = 1; i < m->rows; i++, y++)
                 for (j = 0, x = 2; j < m->cols; j++, x += 3)
                         mvwaddch(m->gamewin, y, x, m->dispboard[i][j]);
 }
 
-WINDOW *
+static WINDOW *
 gamewininit(int rows, int cols)
 {
-        int wr, wc, wy, wx;
         WINDOW *gw;
+        int wr, wc, wy, wx;
         
-        wr = GRIDSPACE_Y(rows);
-        wc = GRIDSPACE_X(cols);
+        wr = SCRSPACE_Y(rows);
+        wc = SCRSPACE_X(cols);
         wy = CENTER(YMAX(stdscr), wr);
         wx = CENTER(XMAX(stdscr), wc);
         gw = newwin(wr, wc, wy, wx);
         wattron(gw, A_BOLD);
         box(gw, 0, 0);
         wattroff(gw, A_BOLD);
+
         return gw;
 }
 
-void
-menuhandle(const Minecurses *m)
-{
-        menuopts();
-        box(m->gamewin, 0, 0);
-        boardprint(m);
-}
-
-void
+static void
 menuopts(void)
 {
-        int w, h, wy, wx;
         WINDOW *opts;
+        int w, h, wy, wx;
 
         w = 36;
         h = 13;
@@ -363,14 +296,8 @@ menuopts(void)
         wx = CENTER(XMAX(stdscr), w);
         opts = newwin(h, w, wy, wx);
         box(opts, 0, 0);
-        menufill(opts);
-        wgetch(opts);
-        delwin(opts);
-}
 
-void
-menufill(WINDOW *opts)
-{
+        /* fill menu */
         mvwprintw(opts, 1, 1, OPT_QUIT);
         mvwprintw(opts, 2, 1, OPT_RESTART);
         mvwprintw(opts, 3, 1, OPT_MOVE_UP);
@@ -381,20 +308,15 @@ menufill(WINDOW *opts)
         mvwprintw(opts, 8, 1, OPT_DEFUSE);
         mvwprintw(opts, 9, 1, OPT_OPEN_CELL);
         mvwprintw(opts, 11, 1, MSG_QUIT_MENU);
+
+        wgetch(opts);
+        delwin(opts);
 }
 
-void
-sessioninfo(const Minecurses *m)
+static void
+endscreen(Minecurses *m, int state)
 {
-        mvprintw(0, 0, MSG_CURPOS, m->x, m->y);
-        mvprintw(0, XMID(stdscr) - (strlen(MSG_NDEFUSED) - 2) / 2,
-                 MSG_NDEFUSED, m->ndefused, m->nmines);
-        mvprintw(0, XMAX(stdscr) - strlen(OPT_CTRLS), OPT_CTRLS);
-}
-
-void
-endscreen(const Minecurses *m, int state)
-{
+        curs_set(0);
         wclear(m->gamewin);
         wrefresh(m->gamewin);
         attron(A_BOLD);
@@ -406,30 +328,23 @@ endscreen(const Minecurses *m, int state)
         case GAME_LOST:
                 mvprintw(YMID(stdscr)-2, XMID(stdscr)-24, MSG_LOSE_1);
                 mvprintw(YMID(stdscr)-1, XMID(stdscr)-4, MSG_LOSE_2);
+                // TODO: print mine board
                 break;
         }
         mvprintw(YMID(stdscr), XMID(stdscr)-11, MSG_CONT);
         refresh();
         attroff(A_BOLD);
         getchar();
-        // restart option
+        // TODO: restart option
 }
 
-void
-cleanup(Minecurses *m)
-{
-        boardsdealloc(m);
-        delwin(m->gamewin);
-        endwin();
-}
-
-void *
+static void *
 emalloc(size_t nb)
 {
         void *p;
 
         if ((p = malloc(nb)) == NULL) {
-                fputs("Error, cannot allocate memory, exiting...\n", stderr);
+                fputs("minecurses: emalloc: cannot allocate memory\n", stderr);
                 exit(EXIT_FAILURE);
         }
         return p;
@@ -438,15 +353,21 @@ emalloc(size_t nb)
 int
 main(int argc, char *argv[])
 {
-#ifndef NCURSES_VERSION
-        fputs("ncurses is needed in order to run this program.\n", stderr);
-        return EXIT_FAILURE;
-#endif /* NCURSES_VERSION */
         Minecurses m;
 
-        CURSES_INIT();
+        if (!initscr()) {
+                fputs("minecurses: initscr: cannot initialize ncurses\n", stderr);
+                return 1;
+        }
+        noecho();
+        cbreak();
+
         gamereset(&m);
         gamestart(&m);
-        cleanup(&m);
+
+        boardsdealloc(&m);
+        delwin(m.gamewin);
+        endwin();
+
         return EXIT_SUCCESS;
 }

@@ -5,7 +5,8 @@ university assignment of mine, but I decided to take it a bit further afterwards
 
 ## How to play
 
-The objective is to simply find and defuse all the mines.  
+The objective is to simply find and defuse all the mines, not open all the non-mine
+cells, like in most minesweeper games; this make the game relatively harder.
 
 * Enter number of columns
 * Enter number of rows
@@ -23,35 +24,24 @@ Additional controls
 * `r`: Restart the game
 * `q`: Quit
 
-## To Do
-
-* Add colors
-* Fix wrong mine spawning bug
-* Fix occasional flickering and cursor
-
-## Execution
-
-### UNIX-like operating systems
-
-**Dependencies**
-* `ncurses`
+## Usage
 
 ```shell
 $ cd path/to/minecurses
 $ make && make run
 $ make clean # optional
 ```
-
 You can install `minecurses` by running `sudo make install clean`.
 The binary will be installed in `/usr/local/bin`.
-
-### Windows
-
-Doesn't work.
 
 ## Preview
 
 ### Start screen
-![startmenu](https://user-images.githubusercontent.com/54286563/78460772-52a25e00-76cc-11ea-976b-10212e228ca0.png)
+![startmenu](https://user-images.githubusercontent.com/54286563/102023826-b110f780-3d96-11eb-89a3-4b0679a36a50.png)
 ### Gameplay
-![gameplay](https://user-images.githubusercontent.com/54286563/78460709-bc6e3800-76cb-11ea-92f4-ab58e141e9be.png)
+![gameplay](https://user-images.githubusercontent.com/54286563/102023832-ba9a5f80-3d96-11eb-9341-b2a07a7356de.png)
+
+## To Do
+
+* Add colors
+* Fix occasional wrong mine spawning bug
